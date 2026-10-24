@@ -1,0 +1,139 @@
+.auth {
+    position: fixed;
+    inset: 0; // top、right、bottom、left 占满整个视口
+
+    @include flex(row, center, center);
+}
+
+.auth__form {
+    border-radius: $size-radius;
+    padding: $size-padding;
+    width: 25rem;
+
+    @include flex(column, null, center, null, 1rem);
+}
+
+.auth__cancel-wrap {
+    width: 100%;
+
+    @include flex(row, flex-end);
+}
+
+.auth__cancel-btn {
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+
+    font-size: 1.5rem;
+    opacity: 0.9;
+    background: clr(btn);
+    cursor: pointer;
+}
+
+.auth__title {
+    padding-bottom: $size-padding;
+}
+
+.auth__field {
+    position: relative;
+    width: 100%;
+
+    @include flex(column, center);
+}
+
+.auth__field input {
+    flex: 1;
+    border-radius: $size-radius-bigger;
+    border: 1px solid clr(border-darker);
+    padding: $size-padding-smaller;
+    min-height: 0;
+}
+
+.auth__field span {
+    position: absolute;
+    left: 1rem;
+    top: 0.5rem;
+
+    transition: 0.25s;
+    pointer-events: none;
+}
+
+.auth__field input:focus~span,
+.auth__field input.active~span {
+    top: 0;
+    transform: translateY(-50%) translateX(-6px);
+
+    font-size: 12px;
+    padding: 4px 6px;
+    background: clr(bg);
+}
+
+.auth__code-wrap {
+    width: 100%;
+
+    @include flex(row, center, null, null, 8px);
+}
+
+.auth__code-input {
+    flex: 1;
+    border-radius: $size-radius-bigger;
+    border: 1px solid clr(border-darker);
+    padding: $size-padding-smaller;
+    min-width: 0;
+}
+
+.auth__code-btn {
+    border-radius: $size-radius-bigger;
+    border: 1px solid clr(border-darker);
+    padding: $size-padding-smaller;
+
+    background: var(--bg-darker);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: 0.2s;
+
+    &:hover:not(:disabled) {
+        background: color-mix(in srgb, clr(btn) 90%, #000 10%);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.auth__actions {
+    width: 100%;
+    @include flex(row, null, null, null, 16px);
+}
+
+.auth__btn {
+    border-radius: $size-radius;
+    padding: 0.8rem 1.2rem;
+    flex: 1;
+
+    background: clr(btn);
+    cursor: pointer;
+
+    &:first-child {
+        background: color-mix(in srgb, clr(btn) 95%, #000);
+    }
+
+    &:hover {
+        background: color-mix(in srgb, clr(btn) 90%, #000 10%);
+    }
+}
+
+.auth__change-wrap {
+    padding: 0.5rem;
+    @include flex(row, null, center, null, 8px);
+}
+
+.auth__change-link {
+    color: oklch(37.9% 0.146 265.522);
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}

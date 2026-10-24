@@ -46,7 +46,7 @@
           <button
             type="button"
             class="home__button home__button--dark home__button--large"
-            @click.stop="goToAuth('login')"
+            @click.stop="goToAuth('register')"
           >
             Start exploring <span class="home__button-icon">↗</span>
           </button>
@@ -84,6 +84,7 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { HAND_PATH, ANIMATED_WORD } from "./constants";
+import { useUserStore } from "@/stores/user";
 
 type AuthMode = "login" | "register";
 
@@ -103,10 +104,10 @@ function replayText() {
   });
 }
 
-// onMounted(async () => {
-//   const userStore = useUserStore();
-//   await userStore.resume();
-// });
+onMounted(async () => {
+  const userStore = useUserStore();
+  await userStore.resume();
+});
 </script>
 
 <style scoped lang="scss" src="./style.scss"></style>

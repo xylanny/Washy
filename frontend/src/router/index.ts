@@ -10,6 +10,13 @@ const routes: RouteRecordRaw[] = [
     name: "root",
     component: () => import("@/pages/Home/Home.vue"),
   },
+  {
+    path: "/auth",
+    name: "auth",
+    component: () => import("@/pages/Auth/Auth.vue"),
+    // 将查询参数变成组件props
+    props: (route) => ({ query: route.query }),
+  },
 ];
 
 const router = createRouter({
