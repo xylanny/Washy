@@ -197,8 +197,8 @@ async function auth() {
     }
   }
 
-  alert("Auth success!");
-  // router.replace("/board");
+  // 跳转到面板
+  router.replace("/dashboard");
 }
 
 function formatHint(str: string) {
