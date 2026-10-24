@@ -1,0 +1,449 @@
+$home-accent: #f5bd36;
+$home-accent-dark: #f1b831;
+$home-accent-shadow: rgba(245, 189, 54, 0.18);
+$home-text-muted: #77756f;
+$home-text-light: #8b8983;
+$home-text-caption: #96928a;
+$home-line: rgba(32, 32, 30, 0.14);
+$home-line-light: rgba(32, 32, 30, 0.08);
+
+.home {
+    overflow: hidden;
+    position: relative;
+    min-height: 100vh;
+    padding: 28px clamp(24px, 5vw, 76px) 24px;
+    background: clr(bg);
+
+    @include flex(column);
+}
+
+.home__heading {
+    position: relative;
+    z-index: 2;
+    color: clr(text);
+
+    @include flex(row, space-between, center);
+}
+
+.home__brand {
+    color: clr(text);
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+
+    @include inline-flex(row, null, center, null, 10px);
+}
+
+.home__brand-mark {
+    display: grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    border-radius: 50%;
+    background: clr(text);
+}
+
+.home__brand-mark svg {
+    width: 17px;
+    height: 17px;
+    fill: $home-accent;
+}
+
+.home__hero {
+    width: min(1240px, 100%);
+    margin: 0 auto;
+    flex: 1;
+    display: grid;
+    place-items: center;
+    padding: 34px 0 36px;
+}
+
+.home__hero-stage {
+    position: relative;
+    width: min(100%, 1050px);
+    min-height: min(650px, 68vh);
+    display: grid;
+    place-items: center;
+    isolation: isolate;
+    cursor: pointer;
+}
+
+.home__hero-copy {
+    position: relative;
+    z-index: 3;
+    max-width: 780px;
+    text-align: center;
+}
+
+.home__eyebrow {
+    margin: 0 0 25px;
+    color: $home-text-light;
+    font-size: 0.7rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+
+    @include flex(row, center, center, null, 9px);
+}
+
+.home__eyebrow-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: $home-accent;
+    box-shadow: 0 0 0 5px $home-accent-shadow;
+}
+
+.home__title {
+    margin: 0;
+    color: clr(text);
+    font-size: clamp(3.5rem, 8vw, 8.4rem);
+    font-weight: 650;
+    line-height: 0.91;
+    letter-spacing: -0.09em;
+    cursor: default;
+    user-select: none;
+}
+
+.home__title-line {
+    display: block;
+}
+
+.home__title-line--accent {
+    color: $home-text-muted;
+}
+
+.home__title-letter {
+    display: inline-block;
+    min-width: 0.22em;
+    transform: translateY(0) rotate(0) scale(1);
+}
+
+.home__hero-stage--animating .home__title-letter {
+    animation: letter-arrival 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--letter-index) * 55ms);
+}
+
+.home__description {
+    max-width: 440px;
+    margin: 31px auto 30px;
+    color: $home-text-muted;
+    font-size: 0.98rem;
+    line-height: 1.75;
+}
+
+.home__button {
+    border: 0;
+    border-radius: 999px;
+    padding: 11px 17px;
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 650;
+    cursor: pointer;
+    transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.home__button:hover {
+    transform: translateY(-2px);
+}
+
+.home__button--dark {
+    color: clr(bg);
+    background: clr(text);
+}
+
+.home__button--dark:hover {
+    background: color-mix(in srgb, clr(text) 85%, #000);
+}
+
+.home__button--large {
+    padding: 16px 22px;
+}
+
+.home__button-icon {
+    margin-left: 8px;
+    font-size: 1rem;
+}
+
+.home__signal {
+    position: absolute;
+    z-index: 1;
+    width: min(41vw, 510px);
+    opacity: 0.88;
+    transform: rotate(-19deg) scale(0.9);
+    pointer-events: none;
+}
+
+.home__signal-svg {
+    display: block;
+    width: 100%;
+    fill: $home-accent-dark;
+    filter: drop-shadow(0 25px 22px rgba(179, 125, 18, 0.18));
+}
+
+.home__hero-stage--animating .home__signal {
+    animation: svg-focus 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.home__ring {
+    position: absolute;
+    z-index: 0;
+    width: min(47vw, 590px);
+    height: min(31vw, 390px);
+    border: 1px solid $home-line;
+    border-radius: 50%;
+    animation: ring-breathe 7s ease-in-out infinite;
+}
+
+.home__ring::before,
+.home__ring::after {
+    position: absolute;
+    inset: 9%;
+    border: 1px solid $home-line-light;
+    border-radius: 50%;
+    content: "";
+}
+
+.home__ring::after {
+    inset: 20%;
+    border-color: $home-accent-shadow;
+}
+
+.home__ring--inner {
+    width: min(35vw, 430px);
+    height: min(23vw, 285px);
+    border-style: dashed;
+    border-color: $home-line;
+    animation: ring-spin 20s linear infinite;
+}
+
+.home__dot {
+    position: absolute;
+    z-index: 1;
+    width: 18px;
+    height: 18px;
+    border: 5px solid clr(bg);
+    border-radius: 50%;
+    background: $home-accent-dark;
+    box-shadow: 0 0 0 1px clr(text), 0 0 0 14px rgba(241, 184, 49, 0.15);
+    animation: signal-pulse 2.5s ease-in-out infinite, dot-orbit 9s linear infinite;
+}
+
+.home__caption {
+    position: absolute;
+    right: 7%;
+    bottom: 15%;
+    color: $home-text-caption;
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    line-height: 1.45;
+}
+
+.home__caption-strong {
+    color: clr(text);
+    font-weight: 700;
+}
+
+.home__footer {
+    color: $home-text-caption;
+    font-size: 0.58rem;
+    letter-spacing: 0.13em;
+
+    @include flex(row, null, center, null, 16px);
+}
+
+.home__scroll {
+    @include inline-flex(row, null, center, null, 8px);
+}
+
+.home__scroll-icon {
+    display: block;
+    width: 6px;
+    height: 6px;
+    border: 1px solid $home-text-caption;
+    border-radius: 50%;
+    animation: scroll-blink 1.8s ease-in-out infinite;
+}
+
+.home__footer-line {
+    width: 48px;
+    height: 1px;
+    background: $home-line;
+}
+
+@keyframes enter {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes letter-arrival {
+    0% {
+        opacity: 0;
+        filter: blur(12px);
+        transform: translateY(0.8em) rotate(12deg) scale(0.7);
+    }
+
+    65% {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(-0.08em) rotate(-3deg) scale(1.05);
+    }
+
+    100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0) rotate(0) scale(1);
+    }
+}
+
+@keyframes svg-focus {
+    0% {
+        opacity: 0;
+        transform: rotate(-42deg) scale(0.55);
+        filter: blur(14px);
+    }
+
+    55% {
+        opacity: 0.8;
+        transform: rotate(-12deg) scale(1.03);
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 0.88;
+        transform: rotate(-19deg) scale(0.9);
+        filter: blur(0);
+    }
+}
+
+@keyframes ring-breathe {
+
+    0%,
+    100% {
+        transform: scale(0.96);
+        opacity: 0.65;
+    }
+
+    50% {
+        transform: scale(1.04);
+        opacity: 1;
+    }
+}
+
+@keyframes ring-spin {
+    from {
+        transform: rotate(0);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes signal-pulse {
+
+    0%,
+    100% {
+        transform: scale(0.86);
+        box-shadow: 0 0 0 1px clr(text), 0 0 0 8px rgba(241, 184, 49, 0.1);
+    }
+
+    50% {
+        transform: scale(1.12);
+        box-shadow: 0 0 0 1px clr(text), 0 0 0 18px rgba(241, 184, 49, 0.18);
+    }
+}
+
+@keyframes dot-orbit {
+    from {
+        transform: rotate(0) translateX(min(16vw, 190px)) rotate(0);
+    }
+
+    to {
+        transform: rotate(360deg) translateX(min(16vw, 190px)) rotate(-360deg);
+    }
+}
+
+@keyframes scroll-blink {
+
+    0%,
+    100% {
+        opacity: 0.35;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .home__hero-stage--animating .home__title-letter,
+    .home__signal,
+    .home__ring,
+    .home__dot,
+    .home__scroll-icon {
+        animation: none;
+    }
+}
+
+@media (max-width: 760px) {
+    .home {
+        padding: 22px 20px 18px;
+    }
+
+    .home__hero {
+        padding: 56px 0 30px;
+    }
+
+    .home__hero-copy {
+        text-align: center;
+    }
+
+    .home__eyebrow {
+        justify-content: center;
+    }
+
+    .home__description {
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .home__hero-stage {
+        min-height: 300px;
+        margin-top: 15px;
+    }
+
+    .home__ring {
+        width: min(70vw, 330px);
+        height: min(47vw, 220px);
+    }
+
+    .home__ring--inner {
+        width: min(48vw, 210px);
+        height: min(32vw, 140px);
+    }
+
+    .home__signal {
+        width: min(65vw, 330px);
+    }
+
+    .home__caption {
+        right: 5%;
+        bottom: 7%;
+    }
+
+    .home__footer {
+        font-size: 0.48rem;
+    }
+
+    .home__footer-line {
+        flex: 1;
+    }
+}

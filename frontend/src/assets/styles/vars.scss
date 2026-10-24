@@ -1,0 +1,44 @@
+$size-radius: 8px;
+$size-radius-bigger: 16px;
+$size-radius-smaller: 4px;
+
+$size-padding: 16px;
+$size-padding-smaller:8px;
+$size-padding-smallest: 4px;
+
+$size-font: 16px;
+$size-font-smaller: 14px;
+$size-font-smallest: 12px;
+
+$transition:all 0.25s ease;
+
+
+$themes:(light:(clr-bg:oklch(98.5% .002 247.839),
+        clr-bg-darker:color-mix(in srgb, oklch(98.5% .002 247.839) 90%, #000 10%),
+
+        clr-border: oklch(75.552% 0.00853 254.049),
+        clr-border-darker: oklch(63.219% 0.00701 255.662),
+
+        clr-btn: rgba(214, 214, 214, 0.5),
+
+        clr-text: #2c2c2c,
+
+        clr-icon:#20201E),
+    dark:(clr-bg: oklch(27.491% 0.01094 254.075),
+        clr-bg-darker: color-mix(in srgb, oklch(20% .01 250) 90%, #000 10%),
+
+        clr-border: oklch(40% .01 250),
+        clr-border-darker: oklch(30% .01 250),
+
+        clr-btn: rgba(80, 80, 80, 0.5),
+
+        clr-text: #fff,
+
+        clr-icon:#A4A19A));
+
+/**
+  * 颜色取值
+*/
+@function clr($name) {
+    @return var(--clr-#{$name});
+}

@@ -1,0 +1,72 @@
+@use "sass:map";
+@use "./vars.scss"as *;
+
+html {
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+}
+
+button {
+    outline: none;
+    border: none;
+    background: transparent;
+}
+
+ul,
+ol,
+li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+input {
+    outline: none;
+    border: none;
+    background: none;
+    padding: 0;
+    font: inherit;
+    box-shadow: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+image {
+    display: block;
+}
+
+:root {
+
+    @each $name,
+    $value in map.get($themes, light) {
+        --#{$name}: #{$value};
+    }
+}
+
+@each $theme-name,
+$theme-map in $themes {
+    .#{$theme-name} {
+
+        @each $name,
+        $value in $theme-map {
+            --#{$name}:#{$value};
+        }
+    }
+}
+
+.app-washy {
+    width: 100%;
+    min-height: 100vh;
+}
