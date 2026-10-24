@@ -1,0 +1,142 @@
+.setting {
+    overflow: hidden;
+    position: relative;
+    min-height: 100vh;
+    padding: 28px clamp(24px, 5vw, 76px) 24px;
+    background: clr(bg);
+
+    @include flex(column);
+}
+
+.setting__heading {
+    position: relative;
+    z-index: 2;
+    color: clr(text);
+    padding-bottom: 24px;
+    border-bottom: 1px solid clr(border);
+
+    @include flex(row, space-between, center);
+}
+
+.setting__title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 650;
+    letter-spacing: -0.04em;
+}
+
+.setting__main {
+    width: min(1240px, 100%);
+    margin: 0 auto;
+    flex: 1;
+    padding: 34px 0 36px;
+
+    @include flex(column, flex-start, stretch);
+}
+
+.setting__panel {
+    width: 100%;
+    max-width: 600px;
+
+    @include flex(column, null, null, null, 16px);
+}
+
+.setting__row {
+    padding: $size-padding;
+    border: 1px solid clr(border);
+    border-radius: $size-radius;
+    background: clr(bg-lighter);
+
+    @include flex(row, space-between, center);
+}
+
+.setting__label {
+    color: clr(text);
+    font-size: $size-font;
+}
+
+.setting__select {
+    position: relative;
+    min-width: 120px;
+}
+
+.setting__select-trigger {
+    width: 100%;
+    padding: $size-padding-smaller;
+    border-radius: $size-radius;
+    background: clr(bg-darker);
+    color: clr(text);
+    font-size: $size-font-smaller;
+    text-align: center;
+    cursor: pointer;
+    transition: $transition;
+}
+
+.setting__select-trigger:hover {
+    background: clr(bg-darkest);
+}
+
+.setting__menu {
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + 4px);
+    right: 0;
+    left: 0;
+    padding: $size-padding-smallest;
+    border: 1px solid clr(border);
+    border-radius: $size-radius;
+    background: clr(bg-lighter);
+    transition: $transition;
+
+    @include flex(column, null, null, null, 4px);
+}
+
+.setting__menu-option {
+    padding: $size-padding-smaller;
+    border: none;
+    border-radius: $size-radius;
+    background: transparent;
+    color: clr(text);
+    font-size: $size-font-smaller;
+    cursor: pointer;
+    text-align: left;
+    transition: $transition;
+}
+
+.setting__menu-option:hover,
+.setting__menu-option--selected {
+    background: clr(bg-darker);
+}
+
+.setting__footer {
+    padding-top: 24px;
+    border-top: 1px solid clr(border);
+    color: clr(text);
+    font-size: 0.58rem;
+    letter-spacing: 0.13em;
+    opacity: 0.6;
+
+    @include flex(row, flex-start, center, null, 16px);
+}
+
+.setting__footer-text {
+    @include inline-flex(row, null, center);
+}
+
+@media (max-width: 760px) {
+    .setting {
+        padding: 22px 20px 18px;
+    }
+
+    .setting__main {
+        padding: 24px 0 30px;
+    }
+
+    .setting__row {
+        @include flex(column, center, stretch, null, 12px);
+    }
+
+    .setting__label {
+        text-align: center;
+    }
+}
