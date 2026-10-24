@@ -28,6 +28,11 @@ const routes: RouteRecordRaw[] = [
         name: "setting",
         component: () => import("@/pages/Setting/Setting.vue"),
       },
+      {
+        path: "table",
+        name: "table",
+        component: () => import("@/pages/Table/Table.vue"),
+      },
     ],
   },
 ];
