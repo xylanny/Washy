@@ -1,0 +1,43 @@
+.dashboard-header {
+    grid-area: header;
+    width: 100%;
+    height: 48px;
+    padding: 0 $size-padding;
+    border-bottom: 1px solid clr(border);
+    @include flex(row, flex-start, center);
+    background: clr(bg);
+}
+
+.dashboard-header__trigger {
+    border-radius: $size-radius-bigger;
+    padding: $size-padding-smaller;
+    @include flex(row, center, center);
+    color: clr(text);
+    font-size: $size-font;
+    cursor: pointer;
+}
+
+.dashboard-header__trigger:hover {
+    background: clr(bg-darker);
+}
+
+.dashboard-header__item {
+    padding: $size-padding-smaller;
+    width: 100%;
+    line-height: 1;
+    @include flex(row, space-between);
+    color: clr(text);
+    font-size: $size-font-smaller;
+}
+
+.dashboard-header__shortcut {
+    opacity: 0.6;
+    font-size: $size-font-smallest;
+}
+
+.dashboard-header__arrow {
+    width: $size-font-smaller;
+    height: $size-font-smaller;
+    fill: clr(text);
+    opacity: 0.5;
+}

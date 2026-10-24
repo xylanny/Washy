@@ -1,0 +1,115 @@
+.dashboard-sidebar {
+    grid-area: sidebar;
+    z-index: 5;
+    overflow: hidden;
+    border-right: 1px solid clr(border);
+    @include flex(column);
+    background: clr(bg);
+    transition: $transition;
+}
+
+.dashboard-sidebar__header,
+.dashboard-sidebar__footer {
+    flex-shrink: 0;
+    height: 48px;
+    @include flex(row, center, center);
+}
+
+.dashboard-sidebar__header {
+    border-bottom: 1px solid clr(border);
+}
+
+.dashboard-sidebar__footer {
+    border-top: 1px solid clr(border);
+}
+
+.dashboard-sidebar__header--open,
+.dashboard-sidebar__footer--open {
+    padding: 0 $size-padding;
+    @include flex(row, space-between, center);
+}
+
+.dashboard-sidebar__icon {
+    width: 24px;
+    height: 24px;
+    @include flex(row, center, center);
+    fill: clr(icon);
+    cursor: pointer;
+    transition: $transition;
+}
+
+.dashboard-sidebar__icon:hover {
+    transform: rotate(30deg) scale(1.2);
+}
+
+.dashboard-sidebar__icon--setting {
+    display: none;
+    transition: $transition;
+}
+
+.dashboard-sidebar__icon--setting-open {
+    @include flex(row, center, center);
+}
+
+.dashboard-sidebar__icon--setting:hover {
+    transform: rotate(180deg);
+}
+
+.dashboard-sidebar__icon--toggle {
+    border-radius: $size-radius;
+    padding: 8px;
+    width: 32px;
+    height: 32px;
+    background: clr(bg-darker);
+}
+
+.dashboard-sidebar__nav {
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    padding: 12px 8px;
+    @include flex(column, null, null, null, 2px);
+    list-style: none;
+}
+
+.dashboard-sidebar__nav-item {
+    border-radius: $size-radius;
+    transition: $transition;
+}
+
+.dashboard-sidebar__nav-item--active {
+    background: clr(bg-darker);
+}
+
+.dashboard-sidebar__nav-link {
+    border-radius: $size-radius;
+    padding: 8px 12px;
+    @include flex(row, center, center, null, 12px);
+    font-size: 14px;
+    transition: $transition;
+}
+
+.dashboard-sidebar__nav-link:hover {
+    background: clr(bg-darker);
+}
+
+.dashboard-sidebar__nav-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    @include flex(row, center, center);
+}
+
+.dashboard-sidebar__nav-label {
+    flex: 1;
+    color: clr(text);
+}
+
+.dashboard-sidebar__nav-badge {
+    border-radius: $size-radius;
+    padding: 1px 8px;
+    color: clr(text);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}

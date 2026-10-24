@@ -1,3 +1,4 @@
+import { useUserStore } from "@/stores/user";
 import {
   createRouter,
   createWebHistory,
@@ -17,11 +18,26 @@ const routes: RouteRecordRaw[] = [
     // 将查询参数变成组件props
     props: (route) => ({ query: route.query }),
   },
+  {
+    path: "/dashboard",
+    name: "dashboard",
+    component: () => import("@/pages/Dashboard/Dashboard.vue"),
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(), //采用history模式
   routes,
+});
+
+router.beforeEach(async (to) => {
+  const userStore = useUserStore();
+
+  if (to.path === "/auth" && userStore.user) {
+    return "/dashboard";
+  }
+
+  return true;
 });
 
 export default router;
