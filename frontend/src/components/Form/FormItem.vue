@@ -3,6 +3,7 @@
     class="form-item"
     :class="[
       `is-${validateState}`,
+      `is-label-${labelPosition}`,
       {
         'is-required': isRequired,
         'is-error': validateState === 'error',
@@ -13,9 +14,7 @@
       v-if="label || $slots.label"
       class="form-item__label"
       :for="inputIds[0] || itemId"
-      :style="{
-        width: typeof labelWidth === 'number' ? labelWidth + 'px' : labelWidth,
-      }"
+      :style="labelStyle"
     >
       <slot name="label" :label="label">{{ label }}</slot>
     </label>
@@ -23,7 +22,11 @@
       <slot></slot>
 
       <transition name="zoom-in-top">
-        <div v-if="validateState === 'error'" class="form-item__error">
+        <div
+          v-if="validateState === 'error'"
+          class="form-item__error"
+          role="alert"
+        >
           <slot name="error" :message="validateMessage">{{
             validateMessage
           }}</slot>
@@ -42,8 +45,16 @@ import type {
   FormItemContext,
   FormItemExposes,
 } from "./types";
-import { formContextKey } from "./constants";
-import { computed, inject, onMounted, onUnmounted, ref } from "vue";
+import { formContextKey, formItemContextKey } from "./constants";
+import {
+  computed,
+  inject,
+  onMounted,
+  onUnmounted,
+  provide,
+  reactive,
+  ref,
+} from "vue";
 import { isArray, isEmptyValue, isString } from "@/utils/judge";
 
 const props = defineProps<FormItemProps>();
@@ -173,7 +184,7 @@ function resetField() {
   if (formContext) formContext.model[props.prop] = undefined;
 }
 
-const itemContext: FormItemContext = {
+const itemContext: FormItemContext = reactive({
   prop: props.prop,
   get validateState() {
     return validateState.value;
@@ -184,14 +195,29 @@ const itemContext: FormItemContext = {
   inputIds: inputIds.value,
   addInputId,
   removeInputId,
-};
+});
 
 onMounted(() => formContext?.addField(itemContext));
 onUnmounted(() => formContext?.removeField(itemContext));
 
+// 供 FormSelect 等控件注入，用于读取校验状态与登记控件 id
+provide(formItemContextKey, itemContext);
+
 const labelWidth = computed(
   () => props.labelWidth ?? formContext?.labelWidth ?? "auto",
 );
+
+const labelPosition = computed(() => formContext?.labelPosition ?? "right");
+
+const labelStyle = computed(() => {
+  if (labelPosition.value === "top") {
+    return undefined;
+  }
+
+  const width = labelWidth.value;
+
+  return { width: typeof width === "number" ? `${width}px` : width };
+});
 
 defineExpose<FormItemExposes>({
   validate,
@@ -205,3 +231,5 @@ defineExpose<FormItemExposes>({
   },
 });
 </script>
+
+<style lang="scss" scoped src="./style.scss"></style>

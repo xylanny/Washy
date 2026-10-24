@@ -11,6 +11,7 @@
       :id="inputId"
       :value="modelValue === undefined ? '' : String(modelValue)"
       :disabled="disabled"
+      :aria-invalid="isError || undefined"
       v-bind="attrs"
       @change="handleChange"
       @blur="handleBlur"
@@ -32,9 +33,25 @@
     <span
       v-if="clearable && modelValue !== undefined && !disabled"
       class="form-select__clear"
+      role="button"
+      tabindex="0"
+      aria-label="Clear value"
       @click="handleClear"
+      @keydown.enter.prevent="handleClear"
+      @keydown.space.prevent="handleClear"
     >
-      x
+      <svg
+        viewBox="0 0 16 16"
+        width="12"
+        height="12"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          d="M4.22 4.22a.75.75 0 0 1 1.06 0L8 6.94l2.72-2.72a.75.75 0 1 1 1.06 1.06L9.06 8l2.72 2.72a.75.75 0 1 1-1.06 1.06L8 9.06l-2.72 2.72a.75.75 0 0 1-1.06-1.06L6.94 8 4.22 5.28a.75.75 0 0 1 0-1.06z"
+        />
+      </svg>
     </span>
 
     <div v-if="showEmpty" class="form-select__empty">
@@ -48,10 +65,16 @@ import type {
   FormSelectEmits,
   FormSelectProps,
   FormSelectValue,
-} from "./types";
+} from "../types";
 import { computed, inject, onMounted, onUnmounted, useAttrs } from "vue";
-import { formItemContextKey } from "element-plus";
+import { formItemContextKey } from "../constants";
 import { isEmptyString } from "@/utils/judge";
+
+defineOptions({
+  name: "FormSelect",
+  // 透传属性由内部的 select 承接，避免重复落到外层容器
+  inheritAttrs: false,
+});
 
 const props = withDefaults(defineProps<FormSelectProps>(), {
   modelValue: undefined,
@@ -110,3 +133,5 @@ function handleClear() {
   formItem?.validate("change");
 }
 </script>
+
+<style lang="scss" scoped src="./style.scss"></style>

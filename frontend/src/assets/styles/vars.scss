@@ -23,7 +23,9 @@ $themes:(light:(clr-bg:oklch(98.5% .002 247.839),
 
         clr-text: #2c2c2c,
 
-        clr-icon:#20201E),
+        clr-icon:#20201E,
+
+        clr-error: oklch(55.3% .171 26.5)),
     dark:(clr-bg: oklch(27.491% 0.01094 254.075),
         clr-bg-darker: color-mix(in srgb, oklch(20% .01 250) 90%, #000 10%),
 
@@ -34,7 +36,9 @@ $themes:(light:(clr-bg:oklch(98.5% .002 247.839),
 
         clr-text: #fff,
 
-        clr-icon:#A4A19A));
+        clr-icon:#A4A19A,
+
+        clr-error: oklch(72% .16 22)));
 
 /**
   * 颜色取值

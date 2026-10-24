@@ -1,0 +1,88 @@
+.form {
+    width: 100%;
+    min-width: 0;
+
+    @include flex(column, null, stretch, null, $size-padding);
+
+    color: clr(text);
+    font-size: $size-font-smaller;
+}
+
+.form-item {
+    width: 100%;
+    min-width: 0;
+
+    @include flex(row, null, flex-start, null, $size-padding-smaller);
+}
+
+.form-item.is-label-top {
+    @include flex(column, null, stretch, null, $size-padding-smallest);
+}
+
+.form-item__label {
+    flex-shrink: 0;
+    padding-top: 3px;
+
+    color: clr(text);
+    font-size: $size-font-smaller;
+    line-height: 1.5;
+    text-align: right;
+    word-break: break-word;
+    transition: $transition;
+}
+
+.form-item.is-label-left .form-item__label {
+    text-align: left;
+}
+
+.form-item.is-label-top .form-item__label {
+    padding-top: 0;
+    text-align: left;
+}
+
+.form-item.is-required>.form-item__label::before {
+    content: "*";
+    margin-right: 2px;
+    color: clr(error);
+    line-height: 1;
+}
+
+.form-item__content {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+
+    @include flex(column, null, stretch, null, $size-padding-smallest);
+}
+
+.form-item__error {
+    color: clr(error);
+    font-size: $size-font-smallest;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.zoom-in-top-enter-active,
+.zoom-in-top-leave-active {
+    transform-origin: center top;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.zoom-in-top-enter-from,
+.zoom-in-top-leave-to {
+    opacity: 0;
+    transform: translateY(-4px) scaleY(0.9);
+}
+
+@media (max-width: 768px) {
+
+    .form-item {
+        @include flex(column, null, stretch, null, $size-padding-smallest);
+    }
+
+    .form-item__label {
+        width: auto !important;
+        padding-top: 0;
+        text-align: left;
+    }
+}

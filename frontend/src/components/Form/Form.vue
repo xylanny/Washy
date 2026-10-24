@@ -79,10 +79,18 @@ function clearValidate(props?: string[]) {
 }
 
 const context: FormContext = reactive({
-  model: props.model,
-  rules: props.rules,
-  labelWidth: props.labelWidth,
-  labelPosition: props.labelPosition,
+  get model() {
+    return props.model;
+  },
+  get rules() {
+    return props.rules;
+  },
+  get labelWidth() {
+    return props.labelWidth;
+  },
+  get labelPosition() {
+    return props.labelPosition;
+  },
   addField,
   removeField,
   validateField,
@@ -99,3 +107,5 @@ defineExpose<FormExposes>({
   clearValidate,
 });
 </script>
+
+<style lang="scss" scoped src="./style.scss"></style>
