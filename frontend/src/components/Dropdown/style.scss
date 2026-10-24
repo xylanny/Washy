@@ -1,0 +1,72 @@
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown.is-child {
+    display: block;
+    width: 100%;
+    list-style: none;
+}
+
+.dropdown__trigger {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    text-align: inherit;
+    cursor: pointer;
+}
+
+.dropdown-panel {
+    margin: 0;
+    padding: 0;
+    background: clr(bg);
+    border: 1px solid clr(border);
+    border-radius: $size-radius;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    animation: dropdown-fade-in 0.15s ease-out;
+    /* 选项较多时在面板内部滚动，避免超出视口 */
+    max-height: min(60vh, 360px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+
+.dropdown-item {
+    position: relative;
+    width: 100%;
+
+    @include flex(row, space-between, center, null, 8px);
+
+
+    color: clr(text);
+    cursor: pointer;
+    transition: $transition;
+}
+
+.dropdown-item:hover {
+    background: clr(bg-darker);
+}
+
+.dropdown-item.is-disable {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: transparent;
+}
+
+@keyframes dropdown-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
