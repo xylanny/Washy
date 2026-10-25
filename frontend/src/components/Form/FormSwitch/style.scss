@@ -1,0 +1,93 @@
+$switch-width: 28px;
+$switch-height: 16px;
+$switch-thumb: 10px;
+$switch-gap: 2px;
+$switch-radius: 999px;
+
+.form-switch {
+    flex-shrink: 0;
+    min-height: $size-control;
+    align-self: flex-start;
+
+    @include inline-flex(row, null, center);
+}
+
+.form-switch__label {
+    position: relative;
+    cursor: pointer;
+
+    @include inline-flex(row, null, center);
+}
+
+.form-switch__input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.form-switch__track {
+    position: relative;
+    width: var(--form-switch-width, #{$switch-width});
+    height: var(--form-switch-height, #{$switch-height});
+    border: 1px solid clr(border-darker);
+    border-radius: $switch-radius;
+
+    background: transparent;
+    transition: $transition;
+}
+
+.form-switch__thumb {
+    position: absolute;
+    top: var(--form-switch-gap, #{$switch-gap});
+    left: var(--form-switch-gap, #{$switch-gap});
+    width: var(--form-switch-thumb, #{$switch-thumb});
+    height: var(--form-switch-thumb, #{$switch-thumb});
+    border-radius: 50%;
+
+    background: clr(text);
+    opacity: 0.35;
+    transition: $transition;
+}
+
+.form-switch.is-checked .form-switch__track {
+    background: clr(bg-darker);
+}
+
+.form-switch.is-checked .form-switch__thumb {
+    left: calc(100% - var(--form-switch-thumb, #{$switch-thumb}) - var(--form-switch-gap, #{$switch-gap}));
+    opacity: 1;
+}
+
+.form-switch__input:focus-visible+.form-switch__track {
+    box-shadow: 0 0 0 3px color-mix(in srgb, clr(text) 18%, transparent);
+}
+
+.form-switch.is-disabled {
+    opacity: 0.45;
+}
+
+.form-switch.is-disabled .form-switch__label {
+    cursor: not-allowed;
+}
+
+.form-switch.is-loading .form-switch__thumb {
+    animation: form-switch-pulse 1s ease-in-out infinite;
+}
+
+@keyframes form-switch-pulse {
+    50% {
+        opacity: 0.12;
+    }
+}
+
+.form-switch.is-error .form-switch__track {
+    border-color: clr(error);
+}
+
+.form-switch.is-error .form-switch__thumb {
+    background: clr(error);
+}

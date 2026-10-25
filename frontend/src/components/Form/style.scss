@@ -21,7 +21,8 @@
 
 .form-item__label {
     flex-shrink: 0;
-    padding-top: 3px;
+    /* 与 $size-control 高的控件垂直居中：(行高 - 文字行高) / 2 */
+    padding-top: ($size-control - $size-font-smaller * 1.5) * 0.5;
 
     color: clr(text);
     font-size: $size-font-smaller;

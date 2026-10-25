@@ -109,7 +109,8 @@ async function validateRule(rule: RuleItem, trigger: string): Promise<boolean> {
     }
   }
 
-  const value = fieldValue;
+  // 注意取 ref 的值，否则 required 与 validator 拿到的是 ComputedRef 对象
+  const value = fieldValue.value;
 
   if (rule.required) {
     const empty = isEmptyValue(value);
