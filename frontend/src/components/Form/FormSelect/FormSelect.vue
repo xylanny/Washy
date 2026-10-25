@@ -65,7 +65,7 @@ import type {
   FormSelectEmits,
   FormSelectProps,
   FormSelectValue,
-} from "../types";
+} from "./types";
 import { computed, inject, onMounted, onUnmounted, useAttrs } from "vue";
 import { formItemContextKey } from "../constants";
 import { isEmptyString } from "@/utils/judge";

@@ -1,0 +1,90 @@
+.form-slider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 28px;
+}
+
+.form-slider__track {
+    position: absolute;
+    inset: 0 6px;
+    pointer-events: none;
+}
+
+.form-slider__thumb {
+    position: absolute;
+    top: 50%;
+    left: var(--form-slider-fill, 0%);
+    width: 12px;
+    height: 12px;
+    transform: translate(-50%, -50%);
+}
+
+.form-slider__input {
+    width: 100%;
+    height: 4px;
+    margin: 0;
+    border-radius: 999px;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+
+    background: linear-gradient(to right,
+            clr(text) 0%,
+            clr(text) var(--form-slider-fill, 0%),
+            clr(bg-darker) var(--form-slider-fill, 0%),
+            clr(bg-darker) 100%);
+}
+
+.form-slider__input:disabled {
+    cursor: not-allowed;
+}
+
+.form-slider.is-disabled {
+    opacity: 0.45;
+}
+
+.form-slider__input::-webkit-slider-thumb {
+    width: 12px;
+    height: 12px;
+    border: 2px solid clr(bg);
+    border-radius: 50%;
+    background: clr(text);
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.form-slider__input::-moz-range-thumb {
+    width: 8px;
+    height: 8px;
+    border: 2px solid clr(bg);
+    border-radius: 50%;
+    background: clr(text);
+    cursor: pointer;
+}
+
+.form-slider__input:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 3px color-mix(in srgb, clr(text) 18%, transparent);
+}
+
+.form-slider__input:focus-visible::-moz-range-thumb {
+    box-shadow: 0 0 0 3px color-mix(in srgb, clr(text) 18%, transparent);
+}
+
+.form-slider.is-error .form-slider__input {
+    background: linear-gradient(to right,
+            clr(error) 0%,
+            clr(error) var(--form-slider-fill, 0%),
+            clr(bg-darker) var(--form-slider-fill, 0%),
+            clr(bg-darker) 100%);
+}
+
+.form-slider.is-error .form-slider__input::-webkit-slider-thumb {
+    background: clr(error);
+}
+
+.form-slider.is-error .form-slider__input::-moz-range-thumb {
+    background: clr(error);
+}

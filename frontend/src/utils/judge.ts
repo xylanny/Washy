@@ -82,3 +82,14 @@ export function isEmptyArray(value: unknown): value is unknown[] {
 export function isEmptyValue(value: unknown): boolean {
   return isNil(value) || isEmptyString(value) || isEmptyArray(value);
 }
+
+/**
+ * 判断一个未知值是否为数字
+ *
+ * @param value 未知值
+ *
+ * @returns 布尔值
+ */
+export function isNumber(value: unknown): value is number {
+  return typeof value === "number";
+}
