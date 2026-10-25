@@ -1,0 +1,115 @@
+.form-input {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+
+    @include flex(row, null, center);
+}
+
+.form-input__inner {
+    width: 100%;
+    min-width: 0;
+    height: $size-control;
+    padding: 0 $size-padding-smaller;
+    border: 1px solid clr(border);
+    border-radius: $size-radius;
+
+    color: clr(text);
+    font: inherit;
+    font-size: $size-font-smallest;
+    font-variant-numeric: tabular-nums;
+
+    background: transparent;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: $transition;
+}
+
+.form-input__inner::placeholder {
+    color: clr(text);
+    opacity: 0.4;
+}
+
+.form-input__inner:hover:not(:disabled) {
+    border-color: clr(border-darker);
+}
+
+.form-input__inner:focus {
+    border-color: clr(border-darker);
+}
+
+.form-input__inner:disabled {
+    cursor: not-allowed;
+}
+
+.form-input.is-disabled {
+    opacity: 0.45;
+}
+
+.form-input__inner::-webkit-search-cancel-button {
+    display: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.form-input.is-textarea .form-input__inner {
+    height: auto;
+    min-height: $size-control;
+    padding: $size-padding-smallest $size-padding-smaller;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.form-input:has(.form-input__clear) .form-input__inner {
+    padding-right: 24px;
+}
+
+.form-input__clear {
+    position: absolute;
+    top: 50%;
+    right: $size-padding-smaller;
+    width: 16px;
+    height: 16px;
+    transform: translateY(-50%);
+
+    @include flex(row, center, center);
+
+    color: clr(icon);
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    transition: $transition;
+}
+
+.form-input.is-textarea .form-input__clear {
+    top: $size-padding-smallest;
+    transform: none;
+}
+
+.form-input:hover .form-input__clear,
+.form-input:focus-within .form-input__clear {
+    opacity: 0.55;
+    pointer-events: auto;
+}
+
+.form-input:hover .form-input__clear:hover,
+.form-input:focus-within .form-input__clear:focus-visible {
+    opacity: 1;
+}
+
+.form-input__clear svg {
+    display: block;
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+}
+
+.form-input.is-error .form-input__inner {
+    border-color: clr(error);
+}
+
+.form-input.is-error .form-input__clear:hover,
+.form-input.is-error .form-input__clear:focus-visible {
+    color: clr(error);
+}
