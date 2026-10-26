@@ -1,7 +1,6 @@
-export const THEMES = {
-  system: "system",
-  light: "light",
-  dark: "dark",
-} as const;
+export type SettingSectionName = "appearance" | "charts" | "table";
 
-export type ThemeMode = keyof typeof THEMES;
+export interface SettingSection {
+  name: SettingSectionName;
+  label: string;
+}

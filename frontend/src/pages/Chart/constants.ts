@@ -2,9 +2,6 @@ import type { TableRow } from "@/types";
 import type { ChartPanelOption } from "./ChartPanel/types";
 import type { ChartSource } from "./types";
 
-/** 画布最多渲染的点数，避免超大表格拖慢图表 */
-export const MAX_POINTS = 2_000;
-
 /** 判断某列是否为数值列时最多抽查的行数 */
 export const NUMERIC_SAMPLE_ROWS = 500;
 

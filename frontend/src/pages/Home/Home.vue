@@ -9,6 +9,9 @@
         </span>
         <span>Washy</span>
       </RouterLink>
+
+      <!-- 版本号来自 system store（读取 package.json 的 version） -->
+      <span class="home__version">v{{ systemStore.version }}</span>
     </header>
 
     <main class="home__hero">
@@ -84,11 +87,13 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { HAND_PATH, ANIMATED_WORD } from "./constants";
+import { useSystemStore } from "@/stores/system";
 import { useUserStore } from "@/stores/user";
 
 type AuthMode = "login" | "register";
 
 const router = useRouter();
+const systemStore = useSystemStore();
 const animationKey = ref(0);
 const isAnimating = ref(true);
 

@@ -1,0 +1,226 @@
+.profile {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    background: clr(bg);
+
+    @include flex(column);
+}
+
+/* ===== 标题 ===== */
+.profile__heading {
+    flex-shrink: 0;
+    padding: 20px clamp(20px, 4vw, 48px) 16px;
+    border-bottom: 1px solid clr(border);
+}
+
+.profile__title {
+    margin: 0;
+
+    color: clr(text);
+    font-size: 1.25rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+}
+
+.profile__body {
+    flex: 1;
+    min-height: 0;
+    padding: 24px clamp(20px, 4vw, 48px) 40px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+
+    @include flex(column, null, stretch, null, 16px);
+}
+
+/* ===== 卡片 ===== */
+.profile__card {
+    width: 100%;
+    max-width: 720px;
+    padding: 20px;
+    border: 1px solid clr(border);
+    border-radius: $size-radius-bigger;
+
+    background: clr(bg);
+    color: clr(text);
+
+    @include flex(column, null, stretch, null, 16px);
+}
+
+/* ===== 头像 + 名称 ===== */
+.profile__identity {
+    @include flex(row, null, center, null, 16px);
+}
+
+.profile__avatar {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    overflow: hidden;
+    border-radius: 50%;
+
+    background: clr(bg-darker);
+
+    @include flex(row, center, center);
+}
+
+.profile__avatar img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile__avatar-fallback {
+    color: clr(text);
+    font-size: 1.25rem;
+    font-weight: 600;
+    opacity: 0.55;
+}
+
+.profile__identity-main {
+    flex: 1;
+    min-width: 0;
+
+    @include flex(column, null, flex-start, null, 2px);
+}
+
+.profile__name {
+    overflow: hidden;
+
+    color: clr(text);
+    font-size: $size-font;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.profile__email {
+    overflow: hidden;
+
+    color: clr(text);
+    font-size: $size-font-smallest;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0.55;
+}
+
+.profile__file {
+    display: none;
+}
+
+.profile__status {
+    margin: 0;
+
+    color: clr(text);
+    font-size: $size-font-smallest;
+    opacity: 0.6;
+}
+
+/* ===== 表单 ===== */
+.profile__form {
+    width: 100%;
+
+    @include flex(column, null, stretch, null, 16px);
+}
+
+.profile__actions {
+    @include flex(row, flex-end, center, null, $size-padding-smaller);
+}
+
+/* ===== 账号信息 ===== */
+.profile__card-title {
+    margin: 0;
+
+    color: clr(text);
+    font-size: $size-font-smaller;
+    font-weight: 600;
+}
+
+.profile__details {
+    margin: 0;
+
+    @include flex(column, null, stretch);
+}
+
+.profile__detail {
+    padding: 10px 0;
+    border-bottom: 1px solid clr(border);
+
+    @include flex(row, space-between, center, null, 16px);
+}
+
+.profile__detail:last-child {
+    border-bottom: none;
+}
+
+.profile__detail-label {
+    flex-shrink: 0;
+
+    color: clr(text);
+    font-size: $size-font-smallest;
+    opacity: 0.6;
+}
+
+.profile__detail-value {
+    margin: 0;
+    min-width: 0;
+    overflow: hidden;
+
+    color: clr(text);
+    font-size: $size-font-smallest;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ===== 按钮 ===== */
+.profile__button {
+    padding: $size-padding-smaller $size-padding;
+    border-radius: $size-radius;
+
+    color: clr(bg);
+    font-size: $size-font-smaller;
+    background: clr(text);
+    cursor: pointer;
+    transition: $transition;
+}
+
+.profile__button:hover:not(:disabled) {
+    opacity: 0.85;
+}
+
+.profile__button:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+}
+
+.profile__button--ghost {
+    border: 1px solid clr(border);
+
+    color: clr(text);
+    background: transparent;
+}
+
+.profile__button--ghost:hover:not(:disabled) {
+    background: clr(bg-darker);
+    opacity: 1;
+}
+
+@media (max-width: 640px) {
+    .profile__identity {
+        @include flex(column, null, flex-start, null, 12px);
+    }
+
+    .profile__identity .profile__button {
+        width: 100%;
+    }
+
+    .profile__actions {
+        @include flex(column, null, stretch, null, $size-padding-smaller);
+    }
+}

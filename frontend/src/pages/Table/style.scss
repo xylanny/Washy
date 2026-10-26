@@ -174,6 +174,23 @@
     border-color: clr(border);
 }
 
+/* ===== 紧凑行高（设置 → Table → Compact rows） ===== */
+.table--compact .table__tr--header,
+.table--compact .table__tr--body {
+    height: 32px;
+}
+
+.table--compact .table__th,
+.table--compact .table__td {
+    height: 32px;
+    line-height: 32px;
+}
+
+.table--compact .table__input {
+    height: 24px;
+    line-height: 20px;
+}
+
 @media (max-width: 768px) {
     .table__col-data {
         min-width: 60px;

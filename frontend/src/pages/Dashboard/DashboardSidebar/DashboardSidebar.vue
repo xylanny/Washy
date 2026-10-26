@@ -65,7 +65,7 @@
             : ''
         "
         :size="32"
-        @click="router.push('/profile')"
+        @click="router.push('/dashboard/profile')"
       ></el-avatar>
     </div>
   </aside>

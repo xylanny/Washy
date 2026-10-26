@@ -49,6 +49,25 @@ $home-line-light: rgba(32, 32, 30, 0.08);
     fill: $home-accent;
 }
 
+/* 右上角版本号 */
+.home__version {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border: 1px solid $home-line;
+    border-radius: 999px;
+
+    color: clr(text);
+    font-size: 0.68rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+    opacity: 0.55;
+    transition: $transition;
+}
+
+.home__version:hover {
+    opacity: 0.8;
+}
+
 .home__hero {
     width: min(1240px, 100%);
     margin: 0 auto;

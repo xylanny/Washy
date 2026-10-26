@@ -4,8 +4,9 @@ import type { ChartSource } from "./types";
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useTableStore } from "@/stores/table";
+import { useSystemStore } from "@/stores/system";
 import { isNumber, isString } from "@/utils/judge";
-import { DEMO_SOURCE, MAX_POINTS, NUMERIC_SAMPLE_ROWS } from "./constants";
+import { DEMO_SOURCE, NUMERIC_SAMPLE_ROWS } from "./constants";
 
 /** 表格里读出来的值可能是数字、数字字符串或空值 */
 export function toNumber(value: unknown): number | null {
@@ -51,7 +52,9 @@ function isNumericColumn(rows: TableRow[], header: string): boolean {
  */
 export function useChartSource() {
   const tableStore = useTableStore();
+  const systemStore = useSystemStore();
   const { table } = storeToRefs(tableStore);
+  const { chartPoints } = storeToRefs(systemStore);
 
   const source = computed<ChartSource>(() => {
     const current = table.value;
@@ -70,8 +73,8 @@ export function useChartSource() {
     return DEMO_SOURCE;
   });
 
-  /** 画布只画前 MAX_POINTS 行 */
-  const rows = computed(() => source.value.rows.slice(0, MAX_POINTS));
+  /** 画布只画前「预览点数」行（可在设置里调整） */
+  const rows = computed(() => source.value.rows.slice(0, chartPoints.value));
 
   /**
    * 可选的数值列

@@ -1,5 +1,5 @@
 <template>
-  <section class="table">
+  <section class="table" :class="{ 'table--compact': compact }">
     <div class="table__show" :ref="setContainerRef" @scroll="handleScroll">
       <div v-if="!table" class="table__empty">
         <span>Quick Open</span>
@@ -67,13 +67,17 @@ import Lenis from "lenis";
 import { storeToRefs } from "pinia";
 import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
 import { useTableStore } from "@/stores/table";
+import { useSystemStore } from "@/stores/system";
 import { useVirtualList } from "@/composables/useVirtualList";
 
 const tableStore = useTableStore();
+const systemStore = useSystemStore();
 const { table, rows } = storeToRefs(tableStore);
 const { updateRow } = tableStore;
 
-const unitH = 42;
+/** 紧凑行高（设置里可切换，进入页面时读取） */
+const compact = systemStore.compactTable;
+const unitH = compact ? 32 : 42;
 const visibleH = 600;
 const bufferN = 6;
 const indexColumnW = 54;

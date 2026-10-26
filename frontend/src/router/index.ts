@@ -35,6 +35,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import("@/pages/Table/Table.vue"),
       },
       {
+        path: "profile",
+        name: "profile",
+        component: () => import("@/pages/Profile/Profile.vue"),
+      },
+      {
         path: "chart/line",
         name: "line",
         component: () => import("@/pages/Chart/ChartLine/ChartLine.vue"),
