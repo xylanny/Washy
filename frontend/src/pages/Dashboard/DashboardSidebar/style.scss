@@ -98,6 +98,7 @@
     width: 20px;
     height: 20px;
     @include flex(row, center, center);
+    fill: clr(icon);
 }
 
 .dashboard-sidebar__nav-label {

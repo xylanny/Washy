@@ -4,7 +4,7 @@
     height: 48px;
     padding: 0 $size-padding;
     border-bottom: 1px solid clr(border);
-    @include flex(row, flex-start, center);
+    @include flex(row, flex-start, center, null, $size-padding-smallest);
     background: clr(bg);
 }
 

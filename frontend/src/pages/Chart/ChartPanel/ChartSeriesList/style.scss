@@ -1,0 +1,157 @@
+.chart-series {
+    width: 100%;
+    min-width: 0;
+}
+
+.chart-series__title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+
+    color: clr(text);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0.7;
+}
+
+/* 分组头右侧图标位里的 + */
+.chart-series__add {
+    width: 18px;
+    height: 18px;
+    border-radius: $size-radius-smaller;
+
+    color: clr(icon);
+    opacity: 0.45;
+    cursor: pointer;
+    transition: $transition;
+
+    @include flex(row, center, center);
+}
+
+.chart-series__add:hover {
+    opacity: 1;
+}
+
+.chart-series__add svg {
+    display: block;
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+}
+
+/* ===== 系列行 ===== */
+.chart-series__list {
+    @include flex(column, null, stretch, null, 6px);
+}
+
+.chart-series__item {
+    padding: $size-padding-smallest;
+    border-radius: $size-radius-smaller;
+
+    @include flex(column, null, stretch, null, $size-padding-smallest);
+
+    transition: $transition;
+}
+
+.chart-series__item:hover {
+    background: clr(bg-darker);
+}
+
+.chart-series__row {
+    @include flex(row, null, center, null, 6px);
+}
+
+/* 删除行：只在悬停/聚焦时露出 */
+.chart-series__remove {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: $size-radius-smaller;
+
+    color: clr(icon);
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    transition: $transition;
+
+    @include flex(row, center, center);
+}
+
+.chart-series__item:hover .chart-series__remove,
+.chart-series__remove:focus-visible {
+    opacity: 0.5;
+    pointer-events: auto;
+}
+
+.chart-series__item .chart-series__remove:hover {
+    background: clr(bg);
+    opacity: 1;
+}
+
+.chart-series__remove svg {
+    display: block;
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+}
+
+/* 色块 + 十六进制色值 */
+.chart-series__swatch {
+    position: relative;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+    border: 1px solid clr(border);
+    border-radius: $size-radius-smaller;
+    cursor: pointer;
+    transition: $transition;
+}
+
+.chart-series__swatch:hover {
+    border-color: clr(border-darker);
+}
+
+/* 透明的原生取色器盖在色块上，点色块即打开系统面板 */
+.chart-series__color {
+    position: absolute;
+    inset: -4px;
+    width: calc(100% + 8px);
+    height: calc(100% + 8px);
+    padding: 0;
+    border: none;
+    background: none;
+    /* 重置样式里统一去掉了 appearance，取色器需要显式还原才能弹出 */
+    -webkit-appearance: auto;
+    appearance: auto;
+    cursor: pointer;
+    opacity: 0;
+}
+
+.chart-series__hex {
+    flex: 1;
+    min-width: 0;
+    height: $size-control;
+    padding: 0 $size-padding-smallest;
+    border: 1px solid clr(border);
+    border-radius: $size-radius-smaller;
+
+    color: clr(text);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+
+    background: transparent;
+    transition: $transition;
+}
+
+.chart-series__hex:hover {
+    border-color: clr(border-darker);
+}
+
+.chart-series__hex:focus {
+    border-color: clr(border-darker);
+}

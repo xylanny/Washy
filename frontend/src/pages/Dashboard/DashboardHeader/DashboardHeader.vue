@@ -55,6 +55,28 @@
       </template>
     </Dropdown>
 
+    <Dropdown
+      v-model:is-open="isEditOpen"
+      trigger-mode="click"
+      align="bottom-left"
+    >
+      <template #trigger>
+        <button class="dashboard-header__trigger">
+          <span>Edit</span>
+        </button>
+      </template>
+
+      <template #panel>
+        <!-- 具体动作由当前页面注册，没有页面注册时置灰 -->
+        <DropdownItem :is-disable="!canReset" @click-item="handleReset">
+          <div class="dashboard-header__item">
+            <span>Reset</span>
+            <span class="dashboard-header__shortcut">Ctrl + R</span>
+          </div>
+        </DropdownItem>
+      </template>
+    </Dropdown>
+
     <!-- 隐藏的文件上传 input -->
     <input
       ref="fileInputRef"
@@ -67,21 +89,30 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import Dropdown from "@/components/Dropdown/Dropdown.vue";
 import DropdownItem from "@/components/Dropdown/DropdownItem.vue";
 import { ICON_SVG_GO } from "./constants";
+import { useEditStore } from "@/stores/edit";
 import { useTableStore } from "@/stores/table";
 
 const router = useRouter();
 const route = useRoute();
 const tableStore = useTableStore();
+const editStore = useEditStore();
 const { table } = storeToRefs(tableStore);
 
 const isOpen = ref(false);
+const isEditOpen = ref(false);
 const fileInputRef = ref<HTMLInputElement | null>(null);
+
+const canReset = computed(() => Boolean(editStore.resetHandler));
+
+function handleReset() {
+  editStore.reset();
+}
 
 function openFilePicker() {
   fileInputRef.value?.click();
@@ -136,6 +167,18 @@ function handleKeydown(e: KeyboardEvent) {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
     e.preventDefault();
     handleBackToTable();
+  }
+
+  // Ctrl + R：重置当前页面的编辑内容（没有页面注册时让浏览器正常刷新）
+  if (
+    (e.ctrlKey || e.metaKey) &&
+    !e.shiftKey &&
+    !e.altKey &&
+    e.key.toLowerCase() === "r" &&
+    canReset.value
+  ) {
+    e.preventDefault();
+    handleReset();
   }
 }
 

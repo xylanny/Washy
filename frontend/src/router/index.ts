@@ -22,6 +22,7 @@ const routes: RouteRecordRaw[] = [
     path: "/dashboard",
     name: "dashboard",
     component: () => import("@/pages/Dashboard/Dashboard.vue"),
+    redirect: "/dashboard/table",
     children: [
       {
         path: "setting",
@@ -35,8 +36,28 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: "chart/line",
-        name: "line-chart",
+        name: "line",
         component: () => import("@/pages/Chart/ChartLine/ChartLine.vue"),
+      },
+      {
+        path: "chart/bar",
+        name: "bar",
+        component: () => import("@/pages/Chart/ChartBar/ChartBar.vue"),
+      },
+      {
+        path: "chart/pie",
+        name: "pie",
+        component: () => import("@/pages/Chart/ChartPie/ChartPie.vue"),
+      },
+      {
+        path: "chart/scatter",
+        name: "scatter",
+        component: () => import("@/pages/Chart/ChartScatter/ChartScatter.vue"),
+      },
+      {
+        path: "chart/heatmap",
+        name: "heatmap",
+        component: () => import("@/pages/Chart/ChartHeatmap/ChartHeatmap.vue"),
       },
     ],
   },

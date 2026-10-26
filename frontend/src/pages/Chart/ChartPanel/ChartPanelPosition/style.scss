@@ -1,0 +1,60 @@
+.chart-panel-position {
+    display: grid;
+    grid-template-columns: repeat(3, 18px);
+    grid-auto-rows: 18px;
+    gap: 2px;
+}
+
+.chart-panel-position.is-disabled {
+    opacity: 0.45;
+}
+
+.chart-panel-position__cell {
+    border: 1px solid clr(border);
+    border-radius: $size-radius-smaller;
+
+    background: transparent;
+    cursor: pointer;
+    transition: $transition;
+
+    @include flex(row, center, center);
+}
+
+.chart-panel-position__cell:hover:not(:disabled) {
+    border-color: clr(border-darker);
+    background: clr(bg-darker);
+}
+
+.chart-panel-position__cell.is-active {
+    border-color: clr(text);
+    background: clr(bg-darker);
+}
+
+.chart-panel-position__cell:disabled {
+    cursor: not-allowed;
+}
+
+.chart-panel-position__dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+
+    background: clr(text);
+    opacity: 0.25;
+    transition: $transition;
+}
+
+.chart-panel-position__cell:hover:not(:disabled) .chart-panel-position__dot {
+    opacity: 0.6;
+}
+
+.chart-panel-position__cell.is-active .chart-panel-position__dot {
+    opacity: 1;
+}
+
+/* 中间格：只是占位，不可选 */
+.chart-panel-position__gap {
+    border-radius: $size-radius-smaller;
+    background: clr(bg-darker);
+    opacity: 0.5;
+}

@@ -1,0 +1,266 @@
+$panel-width: 248px;
+$panel-row-gap: 6px;
+
+.chart-panel {
+    flex-shrink: 0;
+    /* 折叠靠 width 过渡，min-width: auto 会阻止收缩，这里显式放开 */
+    min-width: 0;
+    width: $panel-width;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    /* clip 不产生滚动容器，避免内容被聚焦时把面板横向滚动 */
+    overflow: clip;
+
+    @include flex(column);
+
+    color: clr(text);
+    background: clr(bg);
+    /* 用 inset 阴影代替 border，避免 1px 边框把内容挤出横向溢出 */
+    box-shadow: inset 1px 0 0 clr(border);
+    transition: width 0.24s ease, box-shadow 0.24s ease;
+}
+
+/* 折叠：宽度收成 0，内容裁掉，只留右上角的展开按钮 */
+.chart-panel--collapsed {
+    width: 0;
+    box-shadow: inset 1px 0 0 transparent;
+}
+
+.chart-panel__content {
+    flex: 1;
+    min-height: 0;
+    width: $panel-width;
+
+    @include flex(column);
+
+    transition: opacity 0.18s ease, visibility 0.18s;
+}
+
+.chart-panel--collapsed .chart-panel__content {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* ===== 顶部：标题 + 折叠按钮 ===== */
+.chart-panel__header {
+    flex-shrink: 0;
+    height: 40px;
+    padding: 0 $size-padding-smaller;
+    border-bottom: 1px solid clr(border);
+
+    @include flex(row, null, center, null, $size-padding-smallest);
+}
+
+/* 头部标题：点击后原地变成输入框（Figma 选中对象名的交互）
+   未编辑时与编辑态同一个盒子，高度、行高一致，切换不跳动 */
+.chart-panel__title {
+    flex: 1;
+    min-width: 0;
+    height: 24px;
+    margin-left: -4px;
+    padding: 0 4px;
+    overflow: hidden;
+    border: 1px solid transparent;
+    border-radius: $size-radius-smaller;
+
+    color: clr(text);
+    font-size: $size-font-smaller;
+    font-weight: 600;
+    line-height: 22px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: text;
+    transition: $transition;
+}
+
+.chart-panel__title:hover {
+    background: clr(bg-darker);
+}
+
+.chart-panel__title-input {
+    flex: 1;
+    min-width: 0;
+    height: 24px;
+    margin-left: -4px;
+    padding: 0 4px;
+    border: 1px solid clr(border-darker);
+    border-radius: $size-radius-smaller;
+
+    color: clr(text);
+    font-size: $size-font-smaller;
+    font-weight: 600;
+
+    background: clr(bg-darker);
+}
+
+/* 标题右侧的折叠按钮 */
+.chart-panel__toggle {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: $size-radius-smaller;
+
+    color: clr(icon);
+    opacity: 0.55;
+    cursor: pointer;
+    transition: $transition;
+
+    @include flex(row, center, center);
+}
+
+.chart-panel__toggle:hover {
+    background: clr(bg-darker);
+    opacity: 1;
+}
+
+.chart-panel__toggle svg {
+    display: block;
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
+/* 折叠后：浮在 main 右上角的独立按钮
+   面板本身没有定位，按钮的包含块是页面容器 .chart-page，
+   所以不会被面板的 overflow: hidden 裁掉 */
+.chart-panel__toggle--floating {
+    position: absolute;
+    top: $size-padding-smaller;
+    right: $size-padding-smaller;
+    z-index: 3;
+    width: 26px;
+    height: 26px;
+    border: 1px solid clr(border);
+    border-radius: $size-radius;
+
+    background: clr(bg);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 20px rgba(0, 0, 0, 0.08);
+    opacity: 0.9;
+}
+
+.chart-panel__toggle--floating:hover {
+    background: clr(bg-darker);
+    opacity: 1;
+}
+
+/* 折叠后箭头指回面板方向 */
+.chart-panel__toggle--floating svg {
+    transform: rotate(180deg);
+}
+
+.chart-panel-fade-enter-active,
+.chart-panel-fade-leave-active {
+    transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.chart-panel-fade-enter-from,
+.chart-panel-fade-leave-to {
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+/* ===== 分组切换（Figma 的 Design / Prototype 式 Tab） ===== */
+.chart-panel__tabs {
+    flex-shrink: 0;
+    height: 34px;
+    padding: 0 6px;
+    border-bottom: 1px solid clr(border);
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    @include flex(row, flex-start, center, null, 2px);
+}
+
+.chart-panel__tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.chart-panel__tab {
+    flex-shrink: 0;
+    padding: 3px $size-padding-smaller;
+    border: 1px solid transparent;
+    border-radius: $size-radius;
+
+    color: clr(text);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: $transition;
+}
+
+.chart-panel__tab:hover {
+    opacity: 0.9;
+}
+
+.chart-panel__tab.is-active {
+    border-color: clr(border);
+    opacity: 1;
+}
+
+/* ===== 中间：当前分组的表单 ===== */
+.chart-panel__body {
+    flex: 1;
+    min-height: 0;
+    padding: $size-padding-smaller 6px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.chart-panel__body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chart-panel__body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chart-panel__body::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: clr(border);
+}
+
+.chart-panel__body::-webkit-scrollbar-thumb:hover {
+    background: clr(border-darker);
+}
+
+/* 每个分组组件的外层（组件根节点，继承面板的 scope） */
+.chart-panel__fields {
+    width: 100%;
+    min-width: 0;
+
+    @include flex(column, null, stretch, null, $panel-row-gap);
+}
+
+.chart-panel__body :deep(.form-item) {
+    min-height: $size-control;
+}
+
+.chart-panel__body :deep(.form-item__label) {
+    font-size: 11px;
+    opacity: 0.7;
+}
+
+/* 面板窄，控件区比默认的 62% 再收一点 */
+.chart-panel__body :deep(.form-item__content) {
+    flex: 0 1 58%;
+}
+
+/* 整组或单行不可用时，标签一起变淡 */
+.chart-panel__body :deep(.is-off .form-item__label) {
+    opacity: 0.3;
+}
+
+/* Tab 里的折叠段（例如系列列表）收紧一些 */
+.chart-panel__body :deep(.collapse-item__header) {
+    height: 26px;
+    padding: 0 2px;
+}
+
+.chart-panel__body :deep(.collapse-item__content) {
+    padding: 2px 0 0;
+}

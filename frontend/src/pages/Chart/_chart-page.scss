@@ -1,0 +1,41 @@
+@use "../../assets/styles/vars.scss" as *;
+@use "../../assets/styles/mixins.scss" as *;
+
+/* 图表页统一布局：左画布 + 右配置面板 */
+.chart-page {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    /* 不要成为可滚动的容器，避免聚焦时整体横向位移 */
+    overflow-x: clip;
+    background: clr(bg);
+
+    @include flex(row, null, stretch);
+}
+
+@media (max-width: 900px) {
+    .chart-page {
+        @include flex(column, null, stretch);
+    }
+
+    /* 窄屏时面板挪到画布下方 */
+    .chart-page .chart-panel:not(.chart-panel--collapsed) {
+        width: 100%;
+        height: auto;
+        max-height: 46%;
+        box-shadow: inset 0 1px 0 clr(border);
+    }
+
+    /* 折叠态不占空间，展开按钮仍浮在 main 右上角 */
+    .chart-page .chart-panel--collapsed {
+        height: 0;
+        box-shadow: none;
+    }
+
+    .chart-page .chart-canvas {
+        min-height: 220px;
+    }
+}

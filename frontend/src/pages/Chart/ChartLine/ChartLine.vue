@@ -1,33 +1,110 @@
 <template>
-  <div class="chart-line" style="width: 600px; height: 400px">
-    <Chart :option="option" />
+  <div class="chart-page">
+    <ChartCanvas :empty="isEmpty">
+      <LineChart
+        :title="config.title"
+        :categories="categories"
+        :series="series"
+        :show-legend="config.showLegend"
+        :legend-position="config.legendPosition"
+        :value-unit="config.valueUnit"
+        :data-zoom="config.dataZoom"
+        :smooth="smooth"
+        :step="step"
+        :area="config.area"
+        :area-opacity="config.areaOpacity"
+        :line-width="config.lineWidth"
+        :line-dash="config.lineDash"
+        :symbol="config.symbol"
+        :symbol-size="config.symbolSize"
+        :show-values="config.showValues"
+        :x-label-rotate="config.xLabelRotate"
+        :y-scale="config.yScale"
+        :show-grid-y="config.showGridY"
+      />
+    </ChartCanvas>
+
+    <ChartPanel
+      :model="config"
+      :tabs="tabs"
+      :title="config.title"
+      @update:title="handleTitleUpdate"
+      @update:field="handleFieldUpdate"
+      @update:item="handleUpdateSeries"
+      @add:item="handleAddSeries"
+      @remove:item="handleRemoveSeries"
+    />
   </div>
 </template>
 
-<script lang="ts" setup>
-import Chart from "@/components/Chart/Chart.vue";
-import type { ChartOption } from "@/components/Chart/types";
-import { computed } from "vue";
+<script setup lang="ts">
+import type { ChartPanelTab } from "../ChartPanel/types";
+import { computed, onBeforeUnmount, onMounted } from "vue";
+import ChartCanvas from "../ChartCanvas/ChartCanvas.vue";
+import ChartPanel from "../ChartPanel/ChartPanel.vue";
+import LineChart from "@/components/Chart/LineChart/LineChart.vue";
+import DataFields from "./fields/DataFields.vue";
+import LineFields from "./fields/LineFields.vue";
+import LegendFields from "./fields/LegendFields.vue";
+import AxisFields from "./fields/AxisFields.vue";
+import { useChartLine } from "./useChartLine";
+import { useEditStore } from "@/stores/edit";
 
-const data = [
-  { month: "1月", sales: 1200 },
-  { month: "2月", sales: 1800 },
-  { month: "3月", sales: 1500 },
-];
+const {
+  config,
+  categories,
+  series,
+  isEmpty,
+  categoryOptions,
+  valueOptions,
+  smooth,
+  step,
+  handleFieldUpdate,
+  handleTitleUpdate,
+  handleAddSeries,
+  handleRemoveSeries,
+  handleUpdateSeries,
+  handleReset,
+} = useChartLine();
 
-const option = computed<ChartOption>(() => ({
-  title: { text: "sale num" },
-  grid: { left: 48, right: 24, top: 32, bottom: 48 },
-  xAxis: {
-    type: "category",
-    data: data.map((e) => e.month),
+/** 分组：每个分组的表单控件都在自己的组件里 */
+const tabs = computed<ChartPanelTab[]>(() => [
+  {
+    name: "data",
+    label: "Data",
+    component: DataFields,
+    props: {
+      model: config.value,
+      categoryOptions: categoryOptions.value,
+      valueOptions: valueOptions.value,
+    },
   },
-  yAxis: {
-    type: "value",
+  {
+    name: "line",
+    label: "Line",
+    component: LineFields,
+    props: { model: config.value, empty: isEmpty.value },
   },
-  series: {
-    type: "bar",
-    data: data.map((e) => e.sales),
+  {
+    name: "legend",
+    label: "Legend",
+    component: LegendFields,
+    props: { model: config.value },
   },
-}));
+  {
+    name: "axis",
+    label: "Axis",
+    component: AxisFields,
+    props: { model: config.value, empty: isEmpty.value },
+  },
+]);
+
+const editStore = useEditStore();
+
+/** 头部 Edit → Reset 由页面注册，只在图表页生效 */
+onMounted(() => editStore.registerReset(handleReset));
+
+onBeforeUnmount(() => editStore.unregisterReset(handleReset));
 </script>
+
+<style scoped lang="scss" src="./style.scss"></style>
