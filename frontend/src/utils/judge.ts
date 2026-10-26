@@ -93,3 +93,14 @@ export function isEmptyValue(value: unknown): boolean {
 export function isNumber(value: unknown): value is number {
   return typeof value === "number";
 }
+
+/**
+ * 判断一个未知值是否为无限数值
+ *
+ * @param value 未知值
+ *
+ * @returns 布尔值
+ */
+export function isNumberFinite(value: unknown): value is number {
+  return isNumber(value) && Number.isFinite(value);
+}

@@ -3,12 +3,16 @@
 </template>
 
 <script lang="ts" setup>
-import type { ECharts } from "echarts";
-import type { ChartEmits, ChartOption, ChartProps } from "./types";
-import { nextTick, onBeforeMount, onMounted, ref, watch } from "vue";
-import { isArray } from "@/utils/judge";
-import { NON_CARTESIAN_TYPES, RENDER_POINTS_MAX } from "./constants";
 import * as echarts from "echarts";
+import type { ECharts } from "echarts";
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { isArray } from "@/utils/judge";
+import {
+  LARGE_SUPPORTED_TYPES,
+  NON_CARTESIAN_TYPES,
+  RENDER_POINTS_MAX,
+} from "./constants";
+import type { ChartEmits, ChartOption, ChartProps } from "./types";
 
 const props = defineProps<ChartProps>();
 
@@ -18,37 +22,51 @@ const chartRef = ref<HTMLElement | null>(null);
 
 let echartInstance: ECharts | null = null;
 
-/**
- * 统计options中的总数据点数量
- *
- */
+let resizeObserver: ResizeObserver | null = null;
+
 function countPointNum(option: ChartOption): number {
   const series = option.series;
 
   if (!series) return 0;
 
-  const arr = isArray(series) ? series : [series];
+  const list = isArray(series) ? series : [series];
 
-  let total = 0;
-
-  for (const cur of arr) {
+  return list.reduce((total, cur) => {
     const data = (cur as { data?: unknown }).data;
 
-    if (isArray(data)) {
-      total += data.length;
-    }
-  }
-
-  return total;
+    return total + (isArray(data) ? data.length : 0);
+  }, 0);
 }
 
-function buildFinalOption(option: ChartOption): ChartOption {
+function applyLargeDataDefaults(option: ChartOption): ChartOption {
   const isRadial = props.type
     ? NON_CARTESIAN_TYPES.includes(props.type)
     : false;
 
-  const pointNum = countPointNum(option);
-  const isLarge = pointNum > RENDER_POINTS_MAX;
+  const isLarge = countPointNum(option) > RENDER_POINTS_MAX;
+
+  const series = option.series;
+  const list = series ? (isArray(series) ? series : [series]) : [];
+  const patchedSeries = list.map((cur) => {
+    const item = cur as Record<string, unknown>;
+    const type = item.type as string;
+
+    if (!isLarge || isRadial || !LARGE_SUPPORTED_TYPES.includes(type)) {
+      return cur;
+    }
+
+    if (item.large !== undefined) return cur;
+
+    return {
+      ...item,
+      large: true,
+      largeThreshold: RENDER_POINTS_MAX,
+    };
+  });
+
+  const patchedSeriesValue = isArray(series)
+    ? patchedSeries
+    : (patchedSeries[0] ?? series);
 
   return {
     animation: !isLarge,
@@ -58,21 +76,13 @@ function buildFinalOption(option: ChartOption): ChartOption {
     dataZoom:
       !isRadial && isLarge
         ? [
-            {
-              type: "inside",
-              start: 0,
-              end: 100,
-            },
-            {
-              type: "slider",
-              height: 16,
-              bottom: 8,
-            },
+            { type: "inside", start: 0, end: 100 },
+            { type: "slider", height: 16, bottom: 8 },
           ]
         : undefined,
-
     ...option,
-  };
+    series: patchedSeriesValue,
+  } as ChartOption;
 }
 
 function renderChart() {
@@ -83,24 +93,27 @@ function renderChart() {
       echartInstance = echarts.init(chartRef.value);
     }
 
-    echartInstance.setOption(buildFinalOption(props.option), {
+    echartInstance.setOption(applyLargeDataDefaults(props.option), {
       notMerge: true,
     });
-
-    echartInstance.setOption(buildFinalOption(props.option));
   } catch (err) {
-    emits("error", err as Error);
+    emits("error", err instanceof Error ? err : new Error(String(err)));
   }
 }
 
 watch(() => props.option, renderChart, { deep: true });
+
 watch(() => props.type, renderChart);
 
-let resizeObserver: ResizeObserver | null = null;
+/** 暴露给父组件，容器尺寸变化时可手动调用 */
+function resize() {
+  echartInstance?.resize();
+}
+
+defineExpose({ resize });
 
 onMounted(async () => {
   await nextTick();
-
   renderChart();
 
   if (chartRef.value && typeof ResizeObserver !== "undefined") {
@@ -109,7 +122,7 @@ onMounted(async () => {
   }
 });
 
-onBeforeMount(() => {
+onBeforeUnmount(() => {
   resizeObserver?.disconnect();
   resizeObserver = null;
 
