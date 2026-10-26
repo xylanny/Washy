@@ -37,7 +37,7 @@
         >
           <span class="dashboard-sidebar__nav-icon" v-html="icon"></span>
           <span class="dashboard-sidebar__nav-label" v-if="isOpen">
-            {{ name.toUpperCase() }}
+            {{ name[0].toUpperCase() + name.slice(1) }}
           </span>
           <span class="dashboard-sidebar__nav-badge" v-if="isOpen && badge">{{
             badge
