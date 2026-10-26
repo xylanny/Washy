@@ -2,10 +2,14 @@
   <div class="collapse-item" :class="{ 'is-disabled': disabled }">
     <div
       class="collapse-item__header"
-      :class="{ 'is-disabled': disabled, 'is-active': isActive }"
-      role="button"
-      :tabindex="disabled ? -1 : 0"
-      :aria-expanded="isActive"
+      :class="{
+        'is-disabled': disabled,
+        'is-active': isActive,
+        'is-static': !collapsible,
+      }"
+      :role="collapsible ? 'button' : undefined"
+      :tabindex="collapsible && !disabled ? 0 : -1"
+      :aria-expanded="collapsible ? isActive : undefined"
       :aria-disabled="disabled || undefined"
       @click="handleClick"
       @keydown.enter.prevent="handleClick"
@@ -15,8 +19,12 @@
         <slot name="title">{{ title }}</slot>
       </span>
 
-      <!-- disabled 时不显示箭头 -->
-      <span v-if="!disabled" class="collapse-item__angle" aria-hidden="true">
+      <!-- disabled 时不显示图标；不可展开且无自定义图标时也不需要箭头 -->
+      <span
+        v-if="!disabled && (collapsible || Boolean($slots.icon))"
+        class="collapse-item__angle"
+        :class="{ 'collapse-item__angle--custom': Boolean($slots.icon) }"
+      >
         <slot name="icon" :is-active="isActive">
           <svg
             viewBox="0 0 16 16"
@@ -24,6 +32,7 @@
             height="12"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
+            aria-hidden="true"
           >
             <path
               d="M6.22 4.22a.75.75 0 0 1 1.06 0l3.25 3.25a.75.75 0 0 1 0 1.06l-3.25 3.25a.75.75 0 0 1-1.06-1.06L8.94 8 6.22 5.28a.75.75 0 0 1 0-1.06z"
@@ -52,7 +61,11 @@
 </template>
 
 <script lang="ts" setup>
-import type { CollapseItemProps, CollapseItemEmits } from "./types";
+import type {
+  CollapseItemProps,
+  CollapseItemEmits,
+  CollapseItemSlots,
+} from "./types";
 import { computed, inject } from "vue";
 import { COLLAPSE_CTX_KEY } from "./constants";
 
@@ -60,16 +73,24 @@ defineOptions({
   name: "QiCollapseItem",
 });
 
-const props = defineProps<CollapseItemProps>();
+const props = withDefaults(defineProps<CollapseItemProps>(), {
+  collapsible: true,
+});
+
 const emits = defineEmits<CollapseItemEmits>();
+
+defineSlots<CollapseItemSlots>();
 const ctx = inject(COLLAPSE_CTX_KEY, void 0);
 
-const isActive = computed(() =>
-  Boolean(ctx?.activeNames.value.includes(props.name)),
+/** 不可展开的分组一律视为收起 */
+const isActive = computed(
+  () =>
+    props.collapsible &&
+    Boolean(ctx?.activeNames.value.includes(props.name)),
 );
 
 async function handleClick(): Promise<void> {
-  if (props.disabled) return;
+  if (props.disabled || !props.collapsible) return;
 
   try {
     emits("beforeChange", props.name);

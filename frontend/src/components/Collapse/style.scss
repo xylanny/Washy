@@ -37,6 +37,15 @@
     background: transparent;
 }
 
+/* 不可展开：标题只作为分组名 + 图标位使用 */
+.collapse-item__header.is-static {
+    cursor: default;
+}
+
+.collapse-item__header.is-static:hover:not(.is-disabled) {
+    background: transparent;
+}
+
 .collapse-item__title {
     flex: 1;
     min-width: 0;
@@ -57,12 +66,19 @@
     @include flex(row, center, center);
 }
 
-.collapse-item__header:hover .collapse-item__angle {
+.collapse-item__header:hover .collapse-item__angle:not(.collapse-item__angle--custom) {
     opacity: 0.8;
 }
 
-.collapse-item__header.is-active .collapse-item__angle {
+.collapse-item__header.is-active .collapse-item__angle:not(.collapse-item__angle--custom) {
     transform: rotate(90deg);
+}
+
+/* 自定义图标：尺寸、透明度与旋转都交给使用方 */
+.collapse-item__angle--custom {
+    width: auto;
+    height: auto;
+    opacity: 1;
 }
 
 .collapse-item__wrapper {
