@@ -13,16 +13,23 @@ import {
   RENDER_POINTS_MAX,
 } from "./constants";
 import type { ChartEmits, ChartOption, ChartProps } from "./types";
+import type { ChartImageSize } from "@/utils/chartExport";
+import { useChartStore } from "@/stores/chart";
 
 const props = defineProps<ChartProps>();
 
 const emits = defineEmits<ChartEmits>();
+
+const chartStore = useChartStore();
 
 const chartRef = ref<HTMLElement | null>(null);
 
 let echartInstance: ECharts | null = null;
 
 let resizeObserver: ResizeObserver | null = null;
+
+/** 最后一次发布到 store 的配置，卸载时用它确认该不该清空 */
+let snapshot: ChartOption | null = null;
 
 function countPointNum(option: ChartOption): number {
   const series = option.series;
@@ -93,12 +100,28 @@ function renderChart() {
       echartInstance = echarts.init(chartRef.value);
     }
 
-    echartInstance.setOption(applyLargeDataDefaults(props.option), {
-      notMerge: true,
-    });
+    const option = applyLargeDataDefaults(props.option);
+
+    echartInstance.setOption(option, { notMerge: true });
+
+    // 回填给 store：头部 Save 导出时用的就是屏幕上这份配置
+    publishChart(option);
   } catch (err) {
     emits("error", err instanceof Error ? err : new Error(String(err)));
   }
+}
+
+/** 图表当前的实际尺寸 */
+function chartSize(): ChartImageSize {
+  return {
+    width: echartInstance?.getWidth() ?? 0,
+    height: echartInstance?.getHeight() ?? 0,
+  };
+}
+
+function publishChart(option: ChartOption): void {
+  snapshot = option;
+  chartStore.publish(option, chartSize());
 }
 
 watch(() => props.option, renderChart, { deep: true });
@@ -117,7 +140,11 @@ onMounted(async () => {
   renderChart();
 
   if (chartRef.value && typeof ResizeObserver !== "undefined") {
-    resizeObserver = new ResizeObserver(() => echartInstance?.resize());
+    resizeObserver = new ResizeObserver(() => {
+      echartInstance?.resize();
+
+      if (snapshot) chartStore.publishSize(snapshot, chartSize());
+    });
     resizeObserver.observe(chartRef.value);
   }
 });
@@ -125,6 +152,10 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();
   resizeObserver = null;
+
+  // 只清自己发布的那份配置，避免误清新页面的图表
+  chartStore.clear(snapshot);
+  snapshot = null;
 
   echartInstance?.dispose();
   echartInstance = null;

@@ -107,53 +107,28 @@ export const useTableStore = defineStore("table", () => {
     table.value.rows[idx][header] = value;
   }
 
-  function exportTableToFile(
-    table: Table,
-    fileType: "xlsx" | "csv" = "xlsx",
-    download = true,
-  ): File {
-    try {
-      if (!table || table.rows.length === 0) {
-        throw new Error("No data in table can be exported");
-      }
-
-      const dataForExport = table.rows.map((row) =>
-        table.headers.map((header) => row[header] ?? ""),
-      );
-      const wsData = [table.headers, ...dataForExport];
-      const worksheet = XLSX.utils.aoa_to_sheet(wsData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet");
-      const baseName = table.fileName
-        ? table.fileName.replace(/\.[^.]+$/, "")
-        : "export";
-      const fileName = `${baseName}_edited.${fileType === "xlsx" ? "xlsx" : "csv"}`;
-      const content = XLSX.write(workbook, {
-        bookType: fileType,
-        type: "array",
-        ...(fileType === "csv" && { FS: "," }),
-      });
-      const file = new File([content], fileName, {
-        type:
-          fileType === "xlsx"
-            ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            : "text/csv",
-      });
-
-      if (download) {
-        XLSX.writeFile(workbook, fileName, {
-          bookType: fileType,
-          type: "buffer",
-          ...(fileType === "csv" && { FS: "," }),
-        });
-      }
-
-      return file;
-    } catch (err) {
-      message.value =
-        err instanceof Error ? err.message : "Export table to file failure";
-      throw new Error(message.value);
+  /** 表格 → CSV 文件：仅用于上传分析，不在浏览器里下载 */
+  function tableToCSVFile(table: Table): File {
+    if (table.rows.length === 0) {
+      throw new Error("No data in table can be analyzed");
     }
+
+    const dataForExport = table.rows.map((row) =>
+      table.headers.map((header) => row[header] ?? ""),
+    );
+    const worksheet = XLSX.utils.aoa_to_sheet([table.headers, ...dataForExport]);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet");
+
+    const baseName = table.fileName
+      ? table.fileName.replace(/\.[^.]+$/, "")
+      : "export";
+    // FS 是 SheetJS 的 CSV 分隔符选项，类型声明里没有
+    const writeOptions = { bookType: "csv" as const, type: "array" as const, FS: "," };
+    const content = XLSX.write(workbook, writeOptions);
+
+    return new File([content], `${baseName}.csv`, { type: "text/csv" });
   }
 
   async function analysisByKMeans(
@@ -166,7 +141,7 @@ export const useTableStore = defineStore("table", () => {
     }
 
     const formData = new FormData();
-    formData.append("file", exportTableToFile(table.value, "csv", false));
+    formData.append("file", tableToCSVFile(table.value));
 
     if (params.k !== undefined) formData.append("k", String(params.k));
     if (params.maxIterations !== undefined) {
@@ -225,7 +200,6 @@ export const useTableStore = defineStore("table", () => {
     addRow,
     updateRow,
     deleteRow,
-    exportTableToFile,
     isValidFileType,
     resetMessage,
     clearTable,

@@ -48,6 +48,7 @@ import LineFields from "./fields/LineFields.vue";
 import LegendFields from "./fields/LegendFields.vue";
 import AxisFields from "./fields/AxisFields.vue";
 import { useChartLine } from "./useChartLine";
+import { useChartStore } from "@/stores/chart";
 import { useEditStore } from "@/stores/edit";
 
 const {
@@ -100,11 +101,18 @@ const tabs = computed<ChartPanelTab[]>(() => [
 ]);
 
 const editStore = useEditStore();
+const chartStore = useChartStore();
+
+// 同一时刻 store 只保留当前页面的图表配置：进入时替换掉上一个页面留下的
+chartStore.enterPage("line");
 
 /** 头部 Edit → Reset 由页面注册，只在图表页生效 */
 onMounted(() => editStore.registerReset(handleReset));
 
-onBeforeUnmount(() => editStore.unregisterReset(handleReset));
+onBeforeUnmount(() => {
+  editStore.unregisterReset(handleReset);
+  chartStore.leavePage("line");
+});
 </script>
 
 <style scoped lang="scss" src="./style.scss"></style>

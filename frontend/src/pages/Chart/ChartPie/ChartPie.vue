@@ -32,6 +32,7 @@ import PieChart from "@/components/Chart/PieChart/PieChart.vue";
 import DataFields from "./fields/DataFields.vue";
 import StyleFields from "./fields/StyleFields.vue";
 import { useChartPie } from "./useChartPie";
+import { useChartStore } from "@/stores/chart";
 import { useEditStore } from "@/stores/edit";
 
 const {
@@ -78,10 +79,17 @@ const tabs = computed<ChartPanelTab[]>(() => [
 ]);
 
 const editStore = useEditStore();
+const chartStore = useChartStore();
+
+// 同一时刻 store 只保留当前页面的图表配置：进入时替换掉上一个页面留下的
+chartStore.enterPage("pie");
 
 onMounted(() => editStore.registerReset(handleReset));
 
-onBeforeUnmount(() => editStore.unregisterReset(handleReset));
+onBeforeUnmount(() => {
+  editStore.unregisterReset(handleReset);
+  chartStore.leavePage("pie");
+});
 </script>
 
 <style scoped lang="scss" src="./style.scss"></style>

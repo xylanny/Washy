@@ -16,6 +16,13 @@
     border-bottom: 1px solid clr(border);
 }
 
+/* 标题与下方卡片同一列，保持左边缘对齐 */
+.profile__heading-inner {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
 .profile__title {
     margin: 0;
 
@@ -33,13 +40,14 @@
     overflow-y: auto;
     scrollbar-width: thin;
 
-    @include flex(column, null, stretch, null, 16px);
+    @include flex(column, null, center, null, 16px);
 }
 
 /* ===== 卡片 ===== */
 .profile__card {
     width: 100%;
     max-width: 720px;
+    margin: 0 auto;
     padding: 20px;
     border: 1px solid clr(border);
     border-radius: $size-radius-bigger;
@@ -55,16 +63,54 @@
     @include flex(row, null, center, null, 16px);
 }
 
+/* 头像即"更换头像"入口：悬停出遮罩 + 相机图标 */
 .profile__avatar {
+    position: relative;
     flex-shrink: 0;
     width: 64px;
     height: 64px;
-    overflow: hidden;
+    padding: 0;
+    border: none;
     border-radius: 50%;
+    overflow: hidden;
 
     background: clr(bg-darker);
+    cursor: pointer;
+    transition: $transition;
 
     @include flex(row, center, center);
+}
+
+.profile__avatar:hover:not(:disabled) {
+    filter: brightness(0.96);
+}
+
+.profile__avatar:focus-visible {
+    outline: 2px solid clr(border-darker);
+    outline-offset: 2px;
+}
+
+.profile__avatar:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.profile__avatar-overlay {
+    position: absolute;
+    inset: 0;
+
+    @include flex(row, center, center);
+
+    color: #fff;
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: $transition;
+}
+
+.profile__avatar:hover:not(:disabled) .profile__avatar-overlay,
+.profile__avatar:focus-visible .profile__avatar-overlay {
+    opacity: 1;
 }
 
 .profile__avatar img {
@@ -86,16 +132,6 @@
     min-width: 0;
 
     @include flex(column, null, flex-start, null, 2px);
-}
-
-.profile__name {
-    overflow: hidden;
-
-    color: clr(text);
-    font-size: $size-font;
-    font-weight: 600;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .profile__email {
@@ -120,13 +156,7 @@
     opacity: 0.6;
 }
 
-/* ===== 表单 ===== */
-.profile__form {
-    width: 100%;
-
-    @include flex(column, null, stretch, null, 16px);
-}
-
+/* ===== 底部操作 ===== */
 .profile__actions {
     @include flex(row, flex-end, center, null, $size-padding-smaller);
 }
@@ -214,10 +244,6 @@
 @media (max-width: 640px) {
     .profile__identity {
         @include flex(column, null, flex-start, null, 12px);
-    }
-
-    .profile__identity .profile__button {
-        width: 100%;
     }
 
     .profile__actions {

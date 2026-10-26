@@ -30,6 +30,11 @@
     font-size: $size-font-smaller;
 }
 
+.dashboard-header__item:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 .dashboard-header__shortcut {
     opacity: 0.6;
     font-size: $size-font-smallest;

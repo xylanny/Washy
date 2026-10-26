@@ -1,33 +1,61 @@
 <template>
   <section class="profile">
     <header class="profile__heading">
-      <h1 class="profile__title">Profile</h1>
+      <div class="profile__heading-inner">
+        <h1 class="profile__title">Profile</h1>
+      </div>
     </header>
 
     <main class="profile__body">
       <!-- 头像 + 基本信息 -->
       <section class="profile__card">
         <div class="profile__identity">
-          <div class="profile__avatar">
+          <!-- 头像本身即入口：点击选图，松手即进入待保存状态 -->
+          <button
+            type="button"
+            class="profile__avatar"
+            :disabled="saving || !user"
+            title="Change avatar"
+            aria-label="Change avatar"
+            @click="openAvatarPicker"
+          >
             <img v-if="avatarSrc" :src="avatarSrc" :alt="displayName" />
             <span v-else class="profile__avatar-fallback">{{ initial }}</span>
-          </div>
+
+            <span class="profile__avatar-overlay" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+                />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
+            </span>
+          </button>
 
           <div class="profile__identity-main">
-            <span class="profile__name">{{ displayName }}</span>
+            <!-- 点击名字就地改成输入框，改完点 Save 提交 -->
+            <ProfileEditable
+              size="title"
+              :model-value="draft.userName"
+              placeholder="Your name"
+              :disabled="saving || !user"
+              @update:model-value="setName"
+            />
+
             <span class="profile__email">
               {{ user?.userEmail || "Not signed in" }}
             </span>
           </div>
-
-          <button
-            type="button"
-            class="profile__button profile__button--ghost"
-            :disabled="saving || !user"
-            @click="openAvatarPicker"
-          >
-            Change avatar
-          </button>
 
           <input
             ref="avatarInputRef"
@@ -48,29 +76,18 @@
 
         <p v-if="status" class="profile__status">{{ status }}</p>
 
-        <form class="profile__form" @submit.prevent="save">
-          <FormItem prop="userName" label="Display name">
-            <FormInput
-              :model-value="draft.userName"
-              placeholder="Your name"
-              clearable
-              @update:model-value="setName"
-            />
-          </FormItem>
+        <form class="profile__actions" @submit.prevent="save">
+          <button type="submit" class="profile__button" :disabled="!canSave">
+            {{ saving ? "Saving…" : "Save" }}
+          </button>
 
-          <div class="profile__actions">
-            <button type="submit" class="profile__button" :disabled="!canSave">
-              {{ saving ? "Saving…" : "Save changes" }}
-            </button>
-
-            <button
-              type="button"
-              class="profile__button profile__button--ghost"
-              @click="signOut"
-            >
-              Sign out
-            </button>
-          </div>
+          <button
+            type="button"
+            class="profile__button profile__button--ghost"
+            @click="signOut"
+          >
+            Sign out
+          </button>
         </form>
       </section>
 
@@ -98,8 +115,7 @@ import type { UserUpdateDTO } from "@/api/types";
 import type { ProfileDetailItem, ProfileDraft } from "./types";
 import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import FormInput from "@/components/Form/FormInput/FormInput.vue";
-import FormItem from "@/components/Form/FormItem.vue";
+import ProfileEditable from "./ProfileEditable/ProfileEditable.vue";
 import { useUserStore } from "@/stores/user";
 import {
   AVATAR_DATA_PREFIX,
@@ -133,8 +149,9 @@ const avatarSrc = computed(() => {
 const canSave = computed(() => {
   if (saving.value || !user.value) return false;
 
-  const nameChanged =
-    draft.value.userName.trim() !== (user.value.userName ?? "");
+  // 空名字不提交，清空只是方便重新输入
+  const name = draft.value.userName.trim();
+  const nameChanged = name !== "" && name !== (user.value.userName ?? "");
 
   return nameChanged || Boolean(draft.value.userAvatar);
 });
@@ -193,7 +210,8 @@ async function save(): Promise<void> {
   const payload: UserUpdateDTO = {};
   const name = draft.value.userName.trim();
 
-  if (name !== (user.value?.userName ?? "")) payload.userName = name;
+  if (name && name !== (user.value?.userName ?? ""))
+    payload.userName = name;
   if (draft.value.userAvatar) payload.userAvatar = draft.value.userAvatar;
 
   if (!payload.userName && !payload.userAvatar) return;

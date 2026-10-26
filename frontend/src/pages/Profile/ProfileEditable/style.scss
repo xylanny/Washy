@@ -1,0 +1,88 @@
+.profile-editable {
+    width: 100%;
+    min-width: 0;
+
+    @include flex(row, flex-start, center);
+
+    color: clr(text);
+}
+
+/* ===== 展示态：一行文字，悬停给一点底色提示"可点击修改" ===== */
+.profile-editable__text {
+    max-width: 100%;
+    padding: 0 $size-padding-smallest;
+    border: 1px solid transparent;
+    border-radius: $size-radius-smaller;
+
+    color: inherit;
+    font: inherit;
+    line-height: 1.4;
+    text-align: left;
+
+    background: transparent;
+    cursor: text;
+    transition: $transition;
+
+    @include flex(row, null, center);
+}
+
+.profile-editable__text:hover:not(:disabled),
+.profile-editable__text:focus-visible {
+    background: clr(bg-darker);
+}
+
+.profile-editable__value,
+.profile-editable__empty {
+    min-width: 0;
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.profile-editable__empty {
+    opacity: 0.35;
+}
+
+/* ===== 编辑态：文字原位变成输入框 ===== */
+.profile-editable__input {
+    width: 100%;
+    max-width: 320px;
+    padding: 0 $size-padding-smallest;
+    border: 1px solid clr(border-darker);
+    border-radius: $size-radius-smaller;
+
+    color: inherit;
+    font: inherit;
+    line-height: 1.4;
+
+    background: clr(bg);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: $transition;
+}
+
+.profile-editable__input::placeholder {
+    color: inherit;
+    opacity: 0.35;
+}
+
+/* ===== 字号层级 ===== */
+.profile-editable--title {
+    font-size: $size-font;
+    font-weight: 600;
+}
+
+.profile-editable--text {
+    font-size: $size-font-smallest;
+    font-weight: 400;
+}
+
+.profile-editable.is-disabled {
+    opacity: 0.6;
+}
+
+.profile-editable.is-disabled .profile-editable__text {
+    cursor: not-allowed;
+}
