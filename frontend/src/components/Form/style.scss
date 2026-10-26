@@ -8,11 +8,12 @@
     font-size: $size-font-smaller;
 }
 
+/* 两端对齐：标签靠左、控件靠右，中间自动留空 */
 .form-item {
     width: 100%;
     min-width: 0;
 
-    @include flex(row, null, flex-start, null, $size-padding-smaller);
+    @include flex(row, space-between, flex-start, null, $size-padding-smaller);
 }
 
 .form-item.is-label-top {
@@ -27,18 +28,13 @@
     color: clr(text);
     font-size: $size-font-smaller;
     line-height: 1.5;
-    text-align: right;
+    text-align: left;
     word-break: break-word;
     transition: $transition;
 }
 
-.form-item.is-label-left .form-item__label {
-    text-align: left;
-}
-
 .form-item.is-label-top .form-item__label {
     padding-top: 0;
-    text-align: left;
 }
 
 .form-item.is-required>.form-item__label::before {
@@ -48,15 +44,29 @@
     line-height: 1;
 }
 
+/* 控件区固定占右侧一段，内部窄控件（开关等）再靠右对齐 */
 .form-item__content {
     position: relative;
-    flex: 1;
+    flex: 0 1 var(--form-control-width, 62%);
     min-width: 0;
 
-    @include flex(column, null, stretch, null, $size-padding-smallest);
+    @include flex(column, null, flex-end, null, $size-padding-smallest);
+}
+
+.form-item.is-label-top .form-item__content {
+    /* 上下布局时不再限制宽度 */
+    flex: 0 0 auto;
+    align-self: stretch;
+}
+
+/* 没有标签时控件占满整行 */
+.form-item__content:only-child {
+    flex: 0 0 100%;
 }
 
 .form-item__error {
+    align-self: stretch;
+
     color: clr(error);
     font-size: $size-font-smallest;
     line-height: 1.4;
@@ -84,6 +94,10 @@
     .form-item__label {
         width: auto !important;
         padding-top: 0;
-        text-align: left;
+    }
+
+    .form-item__content {
+        flex: 0 0 auto;
+        align-self: stretch;
     }
 }

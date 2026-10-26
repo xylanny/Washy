@@ -1,0 +1,51 @@
+.chart-form {
+    width: 100%;
+    padding: 0 0 $size-padding;
+}
+
+/* ===== 分组标题（Collapse 的 title 插槽内容） ===== */
+.chart-form__group-name {
+    overflow: hidden;
+
+    color: clr(text);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0.7;
+}
+
+.chart-form__group-meta {
+    min-width: 0;
+    overflow: hidden;
+
+    color: clr(text);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0.4;
+}
+
+/* ===== 面板内的 Collapse 微调 ===== */
+.chart-form :deep(.collapse-item__header) {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: clr(bg);
+}
+
+.chart-form :deep(.collapse-item__header:hover:not(.is-disabled)) {
+    background: clr(bg-darker);
+}
+
+.chart-form :deep(.collapse-item__content) {
+    padding: 2px 0 $size-padding-smaller;
+}
+
+/* 控件被禁用时，整行标签一起置灰 */
+.chart-form__row--off :deep(.form-item__label) {
+    opacity: 0.3;
+}

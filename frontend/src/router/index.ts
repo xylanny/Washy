@@ -33,6 +33,11 @@ const routes: RouteRecordRaw[] = [
         name: "table",
         component: () => import("@/pages/Table/Table.vue"),
       },
+      {
+        path: "chart/line",
+        name: "line-chart",
+        component: () => import("@/pages/Chart/ChartLine/ChartLine.vue"),
+      },
     ],
   },
 ];

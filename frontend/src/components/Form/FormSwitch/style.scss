@@ -7,7 +7,7 @@ $switch-radius: 999px;
 .form-switch {
     flex-shrink: 0;
     min-height: $size-control;
-    align-self: flex-start;
+    align-self: flex-end;
 
     @include inline-flex(row, null, center);
 }
