@@ -2,6 +2,14 @@ import { isArray, isNumber, isString } from "@/utils/judge";
 import { formatCompactValue } from "@/utils/format";
 import type { ChartOption } from "../types";
 import type { ScatterChartProps, ScatterPointValue } from "./types";
+import {
+  LEGEND_BOTTOM_SPACE,
+  LEGEND_SIDE_SPACE,
+  isLegendAtBottom,
+  isLegendAtSide,
+  isLegendAtTop,
+  placeLegend,
+} from "../legend";
 
 type OptionDataValue = string | number | Date | null | undefined;
 
@@ -115,19 +123,63 @@ export function buildScatterOption(props: ScatterChartProps): ChartOption {
   }));
 
   const showLegend = props.showLegend ?? props.series.length > 1;
+  const legendPosition = props.legendPosition ?? "top";
+  const hasTitle = Boolean(props.title);
+
+  const legendAtTop = showLegend && isLegendAtTop(legendPosition);
+  const legendAtBottom = showLegend && isLegendAtBottom(legendPosition);
+  const legendAtSide = showLegend && isLegendAtSide(legendPosition);
+
+  const showGrid = props.showGrid !== false;
+
+  const title = hasTitle
+    ? {
+        text: props.title,
+        left: "center" as const,
+        top: 10,
+        textStyle: { fontSize: 14, fontWeight: 600 as const },
+      }
+    : undefined;
+
+  const legend = showLegend
+    ? {
+        ...placeLegend(legendPosition, {
+          top: hasTitle ? 34 : 8,
+          bottom: props.dataZoom ? 30 : 8,
+        }),
+        type: "scroll" as const,
+      }
+    : undefined;
+
+  const gridTop = hasTitle
+    ? legendAtTop
+      ? 66
+      : 48
+    : legendAtTop
+      ? 40
+      : 24;
+
+  const gridLeft =
+    48 + (legendAtSide && legendPosition === "left" ? LEGEND_SIDE_SPACE : 0);
+
+  const gridRight =
+    24 + (legendAtSide && legendPosition === "right" ? LEGEND_SIDE_SPACE : 0);
+
+  const gridBottom =
+    (props.dataZoom ? 56 : 48) + (legendAtBottom ? LEGEND_BOTTOM_SPACE : 0);
 
   return {
-    title: props.title ? { text: props.title, left: "center" } : undefined,
+    title,
     tooltip: {
       trigger: "item",
       valueFormatter: tooltipValueFormatter,
     },
-    legend: showLegend ? { top: 8, type: "scroll" } : undefined,
+    legend,
     grid: {
-      left: 48,
-      right: 24,
-      top: props.title ? 56 : 32,
-      bottom: props.dataZoom ? 56 : 48,
+      left: gridLeft,
+      right: gridRight,
+      top: gridTop,
+      bottom: gridBottom,
       containLabel: true,
     },
     xAxis: {
@@ -135,6 +187,7 @@ export function buildScatterOption(props: ScatterChartProps): ChartOption {
       name: props.xName,
       nameLocation: "middle",
       nameGap: 28,
+      splitLine: { show: showGrid },
       axisLabel: { formatter: axisValueFormatter },
       scale: true,
     },
@@ -143,6 +196,7 @@ export function buildScatterOption(props: ScatterChartProps): ChartOption {
       name: props.yName,
       nameLocation: "middle",
       nameGap: 44,
+      splitLine: { show: showGrid },
       axisLabel: { formatter: axisValueFormatter },
       scale: true,
     },

@@ -8,6 +8,7 @@ type OptionDataValue = string | number | Date | null | undefined;
 type PieLabelParams = {
   name?: string;
   percent?: number;
+  value?: unknown;
 };
 
 function toNumeric(value: OptionDataValue | OptionDataValue[]): number {
@@ -60,6 +61,11 @@ export function buildPieOption(props: PieChartProps): ChartOption {
 
   const labelPosition = props.labelPosition ?? "outside";
 
+  const labelType = props.labelType ?? "percent";
+
+  /** 中间位置显示总量 */
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+
   const showLegend = props.showLegend ?? true;
 
   const series = [
@@ -71,10 +77,20 @@ export function buildPieOption(props: PieChartProps): ChartOption {
       label: {
         show: true,
         position: labelPosition,
-        formatter: (params: PieLabelParams) =>
-          labelPosition === "center"
-            ? ""
-            : `${params.name ?? ""}\n${params.percent ?? 0}%`,
+        formatter: (params: PieLabelParams) => {
+          if (labelPosition === "center") {
+            return withUnit(formatCompactValue(total));
+          }
+
+          const suffix =
+            labelType === "value"
+              ? withUnit(
+                  formatCompactValue(toNumeric(params.value as OptionDataValue)),
+                )
+              : `${params.percent ?? 0}%`;
+
+          return `${params.name ?? ""}\n${suffix}`;
+        },
       },
       labelLine: {
         show: labelPosition === "outside",

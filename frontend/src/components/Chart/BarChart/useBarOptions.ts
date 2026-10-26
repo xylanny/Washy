@@ -2,6 +2,14 @@ import { isArray, isNumber, isString } from "@/utils/judge";
 import type { ChartOption } from "../types";
 import type { BarChartProps } from "./types";
 import { formatCompactValue } from "@/utils/format";
+import {
+  LEGEND_BOTTOM_SPACE,
+  LEGEND_SIDE_SPACE,
+  isLegendAtBottom,
+  isLegendAtSide,
+  isLegendAtTop,
+  placeLegend,
+} from "../legend";
 
 type OptionDataValue = string | number | Date | null | undefined;
 
@@ -17,6 +25,15 @@ function toNumeric(value: OptionDataValue | OptionDataValue[]): number {
   if (value instanceof Date) return value.getTime();
 
   return Number.NaN;
+}
+
+/** ECharts 回调参数里取出数值 */
+function readParamValue(params: unknown): OptionDataValue {
+  if (params && typeof params === "object" && "value" in params) {
+    return (params as { value?: OptionDataValue }).value;
+  }
+
+  return undefined;
 }
 
 export function buildBarOption(props: BarChartProps): ChartOption {
@@ -35,14 +52,31 @@ export function buildBarOption(props: BarChartProps): ChartOption {
   // 水平柱状：数值轴在 x，类目轴在 y；垂直柱状反之
   const horizontal = props.series.some((s) => s.horizontal);
 
+  /** 柱子上是否显示数值 */
+  const label = props.showValues
+    ? {
+        show: true,
+        position: horizontal ? ("right" as const) : ("top" as const),
+        fontSize: 10,
+        formatter: (params: unknown): string =>
+          withUnit(formatCompactValue(toNumeric(readParamValue(params)))),
+      }
+    : undefined;
+
   const categoryAxis = {
     type: "category" as const,
     data: props.categories,
-    axisLabel: { interval: axisInterval, hideOverlap: true },
+    axisLabel: {
+      interval: axisInterval,
+      hideOverlap: true,
+      rotate: horizontal ? 0 : (props.xLabelRotate ?? 0),
+    },
   };
 
   const valueAxis = {
     type: "value" as const,
+    scale: props.yScale === true,
+    splitLine: { show: props.showGridY !== false },
     axisLabel: { formatter: axisValueFormatter },
   };
 
@@ -55,6 +89,7 @@ export function buildBarOption(props: BarChartProps): ChartOption {
       data: e.data.map((p) => toNumeric(p.value)),
       stack: e.stack,
       barWidth: e.barWidth,
+      label,
       itemStyle: {
         ...(e.color ? { color: e.color } : {}),
         ...(e.borderRadius !== undefined
@@ -75,20 +110,63 @@ export function buildBarOption(props: BarChartProps): ChartOption {
   const cleanSeries = series.map(({ _horizontal, ...rest }) => rest);
 
   const showLegend = props.showLegend ?? props.series.length > 1;
+  const legendPosition = props.legendPosition ?? "top";
+  const hasTitle = Boolean(props.title);
+
+  const legendAtTop = showLegend && isLegendAtTop(legendPosition);
+  const legendAtBottom = showLegend && isLegendAtBottom(legendPosition);
+  const legendAtSide = showLegend && isLegendAtSide(legendPosition);
+
+  /** 标题与图例各占一行，避免叠在一起 */
+  const title = hasTitle
+    ? {
+        text: props.title,
+        left: "center" as const,
+        top: 10,
+        textStyle: { fontSize: 14, fontWeight: 600 as const },
+      }
+    : undefined;
+
+  const legend = showLegend
+    ? {
+        ...placeLegend(legendPosition, {
+          top: hasTitle ? 34 : 8,
+          bottom: props.dataZoom ? 30 : 8,
+        }),
+        type: "scroll" as const,
+      }
+    : undefined;
+
+  const gridTop = hasTitle
+    ? legendAtTop
+      ? 66
+      : 48
+    : legendAtTop
+      ? 40
+      : 24;
+
+  const gridLeft =
+    48 + (legendAtSide && legendPosition === "left" ? LEGEND_SIDE_SPACE : 0);
+
+  const gridRight =
+    24 + (legendAtSide && legendPosition === "right" ? LEGEND_SIDE_SPACE : 0);
+
+  const gridBottom =
+    (props.dataZoom ? 56 : 48) + (legendAtBottom ? LEGEND_BOTTOM_SPACE : 0);
 
   return {
-    title: props.title ? { text: props.title, left: "center" } : undefined,
+    title,
     tooltip: {
       trigger: "axis",
       valueFormatter: tooltipValueFormatter,
-      axisPointer: { type: horizontal ? "shadow" : "shadow" },
+      axisPointer: { type: "shadow" },
     },
-    legend: showLegend ? { top: 8, type: "scroll" } : undefined,
+    legend,
     grid: {
-      left: 48,
-      right: 24,
-      top: props.title ? 56 : 32,
-      bottom: props.dataZoom ? 56 : 48,
+      left: gridLeft,
+      right: gridRight,
+      top: gridTop,
+      bottom: gridBottom,
       containLabel: true,
     },
     xAxis,

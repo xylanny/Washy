@@ -180,7 +180,8 @@ export function buildHeatmapOption(props: HeatmapChartProps): ChartOption {
         data: points,
         label: {
           show:
-            props.xCategories.length <= 12 && props.yCategories.length <= 12,
+            props.showLabels ??
+            (props.xCategories.length <= 12 && props.yCategories.length <= 12),
           formatter: labelFormatter,
         },
         emphasis: {

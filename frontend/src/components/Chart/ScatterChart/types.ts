@@ -1,3 +1,5 @@
+import type { ChartLegendPosition } from "../legend";
+
 export type ScatterPointValue = [number, number] | [number, number, number];
 
 export interface ScatterSeriesData {
@@ -21,8 +23,12 @@ export interface ScatterChartProps {
   yName?: string;
   valueUnit?: string;
   showLegend?: boolean;
+  /** 图例停靠位置，默认 top */
+  legendPosition?: ChartLegendPosition;
   sizeField?: boolean;
   symbolSizeRange?: [number, number];
   dataZoom?: boolean;
+  /** 是否显示网格线 */
+  showGrid?: boolean;
   height?: string;
 }
