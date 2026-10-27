@@ -7,6 +7,11 @@ services:
     image: mysql:8.0
     container_name: washy-mysql
     restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: washy_db
+      MYSQL_USER: ${MYSQL_DATASOURCE_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_DATASOURCE_PASSWORD}
     volumes:
       - ./mysql/data:/var/lib/mysql
       - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -18,6 +23,7 @@ services:
         timeout: 5s
         retries: 5
         start_period: 30s
+
   backend:
     build:
       context: ./backend
@@ -26,15 +32,32 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      JAVA_OPTS: -Xmx512m -Xms256m
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MYSQL_DATASOURCE_URL: jdbc:mysql://mysql:3306/washy_db 
+      MYSQL_DATASOURCE_USERNAME: ${MYSQL_DATASOURCE_USERNAME}
+      MYSQL_DATASOURCE_PASSWORD: ${MYSQL_DATASOURCE_PASSWORD}
+      AUTH_TOKEN_SECRET: ${AUTH_TOKEN_SECRET}
+      APP_CORS_ALLOWED_ORIGINS: ${APP_CORS_ALLOWED_ORIGINS}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
     networks:
       - app-network
+
   frontend:
     build:
       context: ./frontend
+      args:
+        APP_API_BASE_URL: ${APP_API_BASE_URL}
     container_name: washy-frontend
     restart: unless-stopped
     networks:
       - app-network
+
   nginx:
     image: nginx:1.27-alpine
     container_name: washy-nginx
