@@ -1,4 +1,4 @@
-import client from "@/api/client";
+import client, { API_BASE_URL } from "@/api/client";
 import type {
   AiChatDTO,
   AiChatVO,
@@ -8,7 +8,7 @@ import type {
 } from "../types";
 
 /** 与 client.ts 使用同一个后端地址 */
-const BASE_URL: string = import.meta.env.APP_API_BASE_URL ?? "";
+const BASE_URL = API_BASE_URL;
 
 export interface AiStreamHandlers {
   /** 思考过程增量 */

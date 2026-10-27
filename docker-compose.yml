@@ -52,7 +52,8 @@ services:
     build:
       context: ./frontend
       args:
-        APP_API_BASE_URL: ${APP_API_BASE_URL}
+        # 空值会覆盖 .env.production 里的 /api，这里兜底成 /api
+        APP_API_BASE_URL: ${APP_API_BASE_URL:-/api}
     container_name: washy-frontend
     restart: unless-stopped
     networks:

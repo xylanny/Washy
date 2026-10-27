@@ -7,12 +7,13 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 # 再复制源码
 COPY . .
-# 声明构造参数
-# .env→docker-compose.yml中的x.build.args.y→这里
+# 声明构造参数：docker-compose.yml 的 build.args 会传进来
 ARG APP_API_BASE_URL=/api
-# 转换成环境变量
-ENV APP_API_BASE_URL=${APP_API_BASE_URL}
-RUN pnpm run build
+# 构建时以环境变量方式注入（Vite 会读取 process.env）。
+# 注意：Vite 里 process.env 的优先级高于 .env.production，
+# 如果传进来的是空串，会把 .env.production 里的 /api 覆盖成空，
+# 请求就会变成没有 /api 前缀的同源地址，所以这里空值回退到 /api。
+RUN APP_API_BASE_URL="${APP_API_BASE_URL:-/api}" pnpm run build
 
 FROM nginx:1.27-alpine
 RUN rm -rf /usr/share/nginx/html/* && rm -f /etc/nginx/conf.d/default.conf
