@@ -79,7 +79,7 @@ public class EmailServiceImpl implements EmailService {
             log.error("验证码邮件发送失败，收件人：{}", normalizedEmail, exception);
             throw new BusinessException(
                     BusinessCode.THIRD_PARTY_ERROR,
-                    "验证码邮件发送失败，请检查 SMTP 配置和邮箱授权码",
+                    "验证码邮件发送失败，请检查 SMTP 配置和邮箱授权码（465 端口需启用 SSL，587 端口用 STARTTLS）",
                     exception
             );
         }
