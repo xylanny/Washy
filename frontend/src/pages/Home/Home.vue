@@ -111,7 +111,7 @@ function replayText() {
 
 onMounted(async () => {
   const userStore = useUserStore();
-  await userStore.resume();
+  await userStore.ensureSession();
 });
 </script>
 

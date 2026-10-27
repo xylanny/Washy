@@ -10,7 +10,7 @@
       <h2 class="auth__title">{{ title }}</h2>
 
       <el-alert
-        v-if="userStore.message && mode === 'login'"
+        v-if="userStore.message"
         :title="userStore.message"
         type="error"
         closable
@@ -100,6 +100,15 @@ const mode = ref<AuthMode>(
 );
 const title = computed(() => (mode.value === "login" ? "Login" : "Register"));
 
+/** 登录 / 注册成功后回到来源页（由路由守卫带过来），默认进面板 */
+const redirectTarget = computed(() => {
+  const redirect = props.query?.redirect;
+
+  return typeof redirect === "string" && redirect.startsWith("/")
+    ? redirect
+    : "/dashboard";
+});
+
 const loginForm = ref<LoginForm>({
   userEmail: "",
   userPassword: "",
@@ -121,19 +130,26 @@ const computedRegisterForm = computed(() => {
 const time = ref(0);
 let timer: number | null = null;
 
-function getCode() {
-  if (!registerForm.value.userEmail) return;
+async function getCode() {
+  const email = registerForm.value.userEmail;
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(registerForm.value.userEmail)) {
-    alert("请输入正确的邮箱格式");
+  if (!email) {
+    userStore.message = "请先填写邮箱";
     return;
   }
 
-  try {
-    userStore.getEmailCode(registerForm.value.userEmail);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    userStore.message = "请输入正确的邮箱格式";
+    return;
+  }
+
+  userStore.message = "";
+
+  // 只有真的发出去了才倒计时，发信失败（如 SMTP 异常）会留在按钮上让用户重试
+  if (await userStore.getEmailCode(email)) {
     startCountdown();
-  } catch (error) {}
+  }
 }
 
 function startCountdown() {
@@ -173,6 +189,7 @@ function reset() {
 
 function toggleMode() {
   mode.value = mode.value === "login" ? "register" : "login";
+  userStore.message = "";
   clearCountdown();
 }
 
@@ -182,23 +199,31 @@ function cancel() {
 }
 
 async function auth() {
+  userStore.message = "";
+
+  let success = false;
+
   if (mode.value === "login") {
-    if (isLoginValid()) {
-      await userStore.login(loginForm.value);
-    } else {
-      userStore.message = "缺少必要的字段信息";
+    if (!isLoginValid()) {
+      userStore.message = "请填写邮箱和密码";
       return;
     }
-  } else if (mode.value === "register") {
-    if (isRegisterValid()) {
-      await userStore.register(registerForm.value);
-    } else {
-      userStore.message = "缺少必要的字段信息";
+
+    success = await userStore.login(loginForm.value);
+  } else {
+    if (!isRegisterValid()) {
+      userStore.message = "请填写完整的注册信息";
+      return;
     }
+
+    success = await userStore.register(registerForm.value);
   }
 
-  // 跳转到面板
-  router.replace("/dashboard");
+  // 失败就留在当前页，错误显示在上方提示条里
+  if (!success) return;
+
+  reset();
+  await router.replace(redirectTarget.value);
 }
 
 function formatHint(str: string) {

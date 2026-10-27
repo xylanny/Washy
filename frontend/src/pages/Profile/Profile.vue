@@ -115,9 +115,9 @@ function setError(message: string): void {
   userStore.message = message;
 }
 
-/** 进入页面时恢复登录态（已登录则直接跳过） */
+/** 进入页面时确保登录态已恢复（路由守卫已经做过，这里只是兜底） */
 onMounted(async () => {
-  await userStore.resume();
+  await userStore.ensureSession();
   resetDraft();
 });
 
@@ -137,15 +137,11 @@ async function save(): Promise<void> {
   status.value = "";
 
   try {
-    await userStore.update(payload);
-
-    if (userStore.message) return;
+    // 失败原因由 store 写进 message，这里只关心成败
+    if (!(await userStore.update(payload))) return;
 
     resetDraft();
     status.value = "Profile updated";
-  } catch (error) {
-    userStore.message =
-      error instanceof Error ? error.message : "Update failed";
   } finally {
     saving.value = false;
   }

@@ -81,6 +81,22 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const userStore = useUserStore();
 
+  // 面板页必须登录：在这里等会话恢复完成再渲染，
+  // 否则刷新 /dashboard 时页面已经渲染，却还不知道当前用户是谁
+  if (to.path === "/dashboard" || to.path.startsWith("/dashboard/")) {
+    const state = await userStore.ensureSession();
+
+    if (state === "anon") {
+      return {
+        name: "auth",
+        query: { mode: "login", redirect: to.fullPath },
+      };
+    }
+
+    // error（网络/服务异常）时放行：token 没被清掉，页面里会有错误提示，可重试
+    return true;
+  }
+
   if (to.path === "/auth" && userStore.user) {
     return "/dashboard";
   }
