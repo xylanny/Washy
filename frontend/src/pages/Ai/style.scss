@@ -1,0 +1,216 @@
+.ai {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+
+    background: clr(bg);
+
+    @include flex(column);
+}
+
+/* ===== 主体 ===== */
+.ai__body {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+
+    @include flex(row, null, stretch);
+}
+
+.ai__chat {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+
+    @include flex(column);
+}
+
+.ai__rail-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+
+    background: rgba(0, 0, 0, 0.28);
+}
+
+/* 窄屏下用来打开会话列表的浮动按钮 */
+.ai__rail-toggle {
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+    border: 1px solid clr(border);
+    border-radius: $size-radius-smaller;
+
+    color: clr(icon);
+    background: clr(bg);
+    cursor: pointer;
+    opacity: 0.8;
+    transition: $transition;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.ai__rail-toggle:hover {
+    background: clr(bg-darker);
+    opacity: 1;
+}
+
+/* ===== 顶部提示 ===== */
+.ai__notice {
+    flex-shrink: 0;
+    margin: 0;
+    padding: 8px clamp(20px, 4vw, 48px);
+    border-bottom: 1px solid clr(border);
+
+    color: clr(error);
+    font-size: $size-font-smallest;
+    line-height: 1.5;
+    background: clr(bg-darker);
+
+    @include flex(row, space-between, center, null, $size-padding-smaller);
+}
+
+.ai__notice span:first-child {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.ai__notice-actions {
+    flex-shrink: 0;
+
+    @include inline-flex(row, flex-end, center, null, 6px);
+}
+
+.ai__notice-action {
+    height: 20px;
+    padding: 0 $size-padding-smaller;
+    border: 1px solid clr(border);
+    border-radius: $size-radius-smaller;
+
+    color: clr(text);
+    font-size: $size-font-smallest;
+    white-space: nowrap;
+    background: transparent;
+    cursor: pointer;
+    transition: $transition;
+}
+
+.ai__notice-action:hover {
+    background: clr(bg);
+    border-color: clr(border-darker);
+}
+
+.ai__notice-close {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: $size-radius-smaller;
+
+    color: clr(text);
+    cursor: pointer;
+    opacity: 0.45;
+    transition: $transition;
+
+    @include flex(row, center, center);
+}
+
+.ai__notice-close:hover {
+    opacity: 0.85;
+}
+
+/* ===== 空状态 ===== */
+.ai__empty {
+    flex: 1;
+    min-height: 0;
+    padding: 32px clamp(20px, 4vw, 48px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+
+    text-align: center;
+
+    @include flex(column, center, center, null, 10px);
+}
+
+.ai__empty-icon {
+    margin-bottom: 2px;
+
+    color: clr(text);
+    opacity: 0.7;
+
+    @include flex(row, center, center);
+}
+
+.ai__empty-icon :deep(svg) {
+    width: 42px;
+    height: 42px;
+}
+
+.ai__empty-title {
+    margin: 0;
+
+    color: clr(text);
+    font-size: 1.1rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+}
+
+
+.ai__empty-hint {
+    margin: 2px 0 0;
+
+    color: clr(text);
+    font-size: $size-font-smallest;
+    opacity: 0.35;
+}
+
+/* ===== 消息区 ===== */
+.ai__messages {
+    flex: 1;
+    min-height: 0;
+    padding: 20px clamp(20px, 4vw, 48px) 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.ai__messages-inner {
+    width: 100%;
+    max-width: 820px;
+    margin: 0 auto;
+
+    @include flex(column, null, stretch, null, 20px);
+}
+
+@media (max-width: 860px) {
+    .ai__rail-toggle {
+        display: flex;
+    }
+
+    .ai__rail-overlay {
+        display: block;
+    }
+
+    .ai__empty,
+    .ai__messages {
+        padding-top: 48px;
+    }
+}
+
+@media (max-width: 640px) {
+    .ai__messages {
+        padding: 44px 12px 4px;
+    }
+
+    .ai__empty {
+        padding: 48px 12px 20px;
+    }
+}

@@ -81,3 +81,54 @@ export interface ResultChartAnalysisVO {
   message?: string;
   data?: ChartAnalysisVO;
 }
+
+/** ===== AI 对话 ===== */
+
+/** 一条对话消息：content 为文本，images 为 data:image/*;base64 Data URL */
+export interface AiChatTurn {
+  role: "user" | "assistant";
+  content: string;
+  images?: string[];
+}
+
+/** POST /ai/chat 与 /ai/chat/stream 的请求体 */
+export interface AiChatDTO {
+  messages: AiChatTurn[];
+  /** 由前端根据当前数据表生成的数据上下文 */
+  datasetContext?: string;
+  temperature?: number;
+  maxTokens?: number;
+}
+
+/** 非流式对话结果 */
+export interface AiChatVO {
+  content?: string;
+  reasoningContent?: string;
+  model?: string;
+  promptTokens?: number;
+  completionTokens?: number;
+  totalTokens?: number;
+  elapsedMs?: number;
+}
+
+/** 流式对话结束事件 */
+export interface AiStreamDone {
+  model?: string;
+  reasoningContent?: string;
+  promptTokens?: number;
+  completionTokens?: number;
+  totalTokens?: number;
+  elapsedMs?: number;
+  length?: number;
+}
+
+/** GET /ai/info */
+export interface AiInfoVO {
+  model?: string;
+  visionModel?: string;
+  visionEnabled?: boolean;
+  maxImages?: number;
+  maxTokens?: number;
+  maxHistoryMessages?: number;
+  maxContextChars?: number;
+}

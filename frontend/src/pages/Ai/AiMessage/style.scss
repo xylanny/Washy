@@ -1,0 +1,372 @@
+.ai-message {
+    width: 100%;
+    min-width: 0;
+
+    @include flex(column, null, stretch, null, $size-padding-smaller);
+}
+
+.ai-message--user {
+    align-items: flex-end;
+}
+
+/* ===== 用户气泡 ===== */
+.ai-message__bubble {
+    max-width: min(78%, 640px);
+    padding: 9px 14px;
+    border: 1px solid clr(border);
+    border-radius: $size-radius-bigger;
+
+    color: clr(text);
+    font-size: $size-font-smaller;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+
+    background: clr(bg-darker);
+}
+
+/* ===== 用户图片 ===== */
+.ai-message__images {
+    max-width: min(78%, 640px);
+
+    @include flex(row, flex-end, center, wrap, $size-padding-smaller);
+}
+
+.ai-message__image {
+    width: 92px;
+    height: 92px;
+    padding: 0;
+    border: 1px solid clr(border);
+    border-radius: $size-radius;
+    overflow: hidden;
+
+    background: clr(bg-darker);
+    cursor: zoom-in;
+    transition: $transition;
+}
+
+.ai-message__image:hover {
+    border-color: clr(border-darker);
+}
+
+.ai-message__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===== 助手：思考过程 ===== */
+.ai-message__reasoning {
+    @include flex(column, null, stretch, null, $size-padding-smallest);
+}
+
+.ai-message__reasoning-toggle {
+    @include inline-flex(row, flex-start, center, null, 6px);
+    align-self: flex-start;
+
+    color: clr(text);
+    font-size: $size-font-smallest;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: $transition;
+}
+
+.ai-message__reasoning-toggle:hover {
+    opacity: 0.9;
+}
+
+.ai-message__chevron {
+    transition: $transition;
+
+    @include inline-flex(row, center, center);
+}
+
+.ai-message__chevron.is-open {
+    transform: rotate(180deg);
+}
+
+.ai-message__reasoning-text {
+    max-height: 240px;
+    margin: 0;
+    padding: 2px 0 2px 12px;
+    border-left: 2px solid clr(border);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+
+    color: clr(text);
+    font-size: $size-font-smallest;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    opacity: 0.55;
+}
+
+/* ===== 助手正文 ===== */
+.ai-message__content {
+    width: 100%;
+    min-width: 0;
+}
+
+.ai-message__body {
+    color: clr(text);
+    font-size: $size-font-smaller;
+    line-height: 1.75;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.ai-message__body :deep(p) {
+    margin: 0 0 10px;
+}
+
+.ai-message__body :deep(p:last-child) {
+    margin-bottom: 0;
+}
+
+.ai-message__body :deep(h2),
+.ai-message__body :deep(h3),
+.ai-message__body :deep(h4),
+.ai-message__body :deep(h5),
+.ai-message__body :deep(h6) {
+    margin: 16px 0 8px;
+    font-weight: 650;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+}
+
+.ai-message__body :deep(h2) {
+    font-size: 1.02rem;
+}
+
+.ai-message__body :deep(h3) {
+    font-size: 0.96rem;
+}
+
+.ai-message__body :deep(h4),
+.ai-message__body :deep(h5),
+.ai-message__body :deep(h6) {
+    font-size: $size-font-smaller;
+}
+
+.ai-message__body :deep(ul) {
+    margin: 0 0 10px;
+    padding-left: 20px;
+    list-style: disc outside;
+}
+
+.ai-message__body :deep(ol) {
+    margin: 0 0 10px;
+    padding-left: 20px;
+    list-style: decimal outside;
+}
+
+.ai-message__body :deep(li) {
+    margin: 2px 0;
+}
+
+.ai-message__body :deep(strong) {
+    font-weight: 650;
+}
+
+.ai-message__body :deep(em) {
+    font-style: italic;
+}
+
+.ai-message__body :deep(del) {
+    opacity: 0.6;
+}
+
+.ai-message__body :deep(a) {
+    color: clr(text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.ai-message__body :deep(a:hover) {
+    opacity: 0.75;
+}
+
+.ai-message__body :deep(blockquote) {
+    margin: 0 0 10px;
+    padding-left: 12px;
+    border-left: 2px solid clr(border-darker);
+
+    color: clr(text);
+    opacity: 0.75;
+}
+
+.ai-message__body :deep(hr) {
+    margin: 14px 0;
+    border: none;
+    border-top: 1px solid clr(border);
+}
+
+/* 代码 */
+.ai-message__body :deep(code) {
+    padding: 1px 5px;
+    border-radius: $size-radius-smaller;
+
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+        "Liberation Mono", monospace;
+    font-size: 0.92em;
+
+    background: clr(bg-darker);
+}
+
+.ai-message__body :deep(.md-code) {
+    margin: 10px 0;
+    padding: 10px 12px;
+    border: 1px solid clr(border);
+    border-radius: $size-radius;
+    overflow-x: auto;
+    scrollbar-width: thin;
+
+    background: clr(bg-darker);
+}
+
+.ai-message__body :deep(.md-code code) {
+    padding: 0;
+
+    font-size: $size-font-smallest;
+    line-height: 1.6;
+    white-space: pre;
+
+    background: none;
+}
+
+/* 表格 */
+.ai-message__body :deep(.md-table) {
+    margin: 10px 0;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.ai-message__body :deep(table) {
+    width: 100%;
+    border-collapse: collapse;
+
+    font-size: $size-font-smallest;
+    font-variant-numeric: tabular-nums;
+}
+
+.ai-message__body :deep(th),
+.ai-message__body :deep(td) {
+    padding: 6px 10px;
+    border: 1px solid clr(border);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.ai-message__body :deep(th) {
+    font-weight: 600;
+    background: clr(bg-darker);
+}
+
+/* ===== 状态 ===== */
+.ai-message__pending {
+    margin: 0;
+
+    color: clr(text);
+    font-size: $size-font-smallest;
+    opacity: 0.45;
+}
+
+.ai-message__caret {
+    display: inline-block;
+    width: 6px;
+    height: 14px;
+    margin-top: 4px;
+    background: clr(text);
+    animation: ai-caret-blink 1s steps(2, start) infinite;
+}
+
+@keyframes ai-caret-blink {
+    to {
+        visibility: hidden;
+    }
+}
+
+.ai-message__notice {
+    margin: 0;
+
+    color: clr(error);
+    font-size: $size-font-smallest;
+    line-height: 1.6;
+}
+
+/* ===== 底部信息 / 操作 ===== */
+.ai-message__footer {
+    min-height: 22px;
+
+    @include flex(row, flex-start, center, null, $size-padding-smaller);
+}
+
+.ai-message__meta {
+    color: clr(text);
+    font-size: $size-font-smallest;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.35;
+}
+
+.ai-message__actions {
+    opacity: 0;
+    transition: $transition;
+
+    @include inline-flex(row, flex-start, center, null, 2px);
+}
+
+.ai-message:hover .ai-message__actions,
+.ai-message__actions:focus-within {
+    opacity: 1;
+}
+
+.ai-message__action {
+    width: 22px;
+    height: 22px;
+    border-radius: $size-radius-smaller;
+
+    color: clr(text);
+    cursor: pointer;
+    opacity: 0.5;
+    transition: $transition;
+
+    @include flex(row, center, center);
+}
+
+.ai-message__action:hover {
+    background: clr(bg-darker);
+    opacity: 0.9;
+}
+
+/* ===== 图片大图 ===== */
+.ai-message__preview {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+
+    background: rgba(0, 0, 0, 0.72);
+    cursor: zoom-out;
+
+    @include flex(row, center, center);
+}
+
+.ai-message__preview img {
+    max-width: min(92vw, 1200px);
+    max-height: 88vh;
+    border-radius: $size-radius;
+    object-fit: contain;
+}
+
+@media (max-width: 640px) {
+    .ai-message__bubble,
+    .ai-message__images {
+        max-width: 92%;
+    }
+
+    .ai-message__image {
+        width: 72px;
+        height: 72px;
+    }
+}

@@ -1,5 +1,5 @@
 import type { ChartOption } from "@/components/Chart/types";
-import type { ChartImageFormat, ChartImageSize } from "@/utils/chartExport";
+import type { ChartExportFormat, ChartImageSize } from "@/utils/chartExport";
 import { defineStore } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 
@@ -89,15 +89,16 @@ export const useChartStore = defineStore("chart", () => {
   }
 
   /** 导出文件名：优先用图表标题，没有标题时用页面类型兜底 */
-  function resolveFileName(format: ChartImageFormat): string {
+  function resolveFileName(format: ChartExportFormat): string {
     const title = toFileName(readTitle(option.value));
     const fallback = `washy-${page.value || "chart"}-chart`;
 
+    // 扩展名由下载时按真实 MIME 校正（jpeg → .jpg）
     return `${title || fallback}.${format}`;
   }
 
   /** 导出当前图表，返回是否成功 */
-  async function saveAs(format: ChartImageFormat): Promise<boolean> {
+  async function saveAs(format: ChartExportFormat): Promise<boolean> {
     const snapshot = option.value;
 
     if (!snapshot || saving.value) return false;

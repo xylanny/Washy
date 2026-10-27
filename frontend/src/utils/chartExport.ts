@@ -1,8 +1,8 @@
 import type { ChartOption } from "@/components/Chart/types";
 import * as echarts from "echarts";
 
-/** 图表可导出的图片格式 */
-export type ChartImageFormat = "png" | "svg";
+/** 图表可导出的格式 */
+export type ChartExportFormat = "png" | "svg" | "jpeg" | "webp";
 
 /** 导出时使用的画布尺寸 */
 export interface ChartImageSize {
@@ -18,6 +18,43 @@ const PIXEL_RATIO = 2;
 
 /** 图表本身是透明的，落盘时统一补白 */
 const BACKGROUND_COLOR = "#ffffff";
+
+/** MIME → 扩展名：按实际编码结果修正文件名（JPEG 用 .jpg） */
+const MIME_EXTENSIONS: Record<string, string> = {
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/webp": "webp",
+  "image/svg+xml": "svg",
+};
+
+/** 读取 data URL 的 MIME */
+function dataUrlMime(dataUrl: string): string {
+  const comma = dataUrl.indexOf(",");
+
+  if (!dataUrl.startsWith("data:") || comma < 0) return "";
+
+  const meta = dataUrl.slice(5, comma);
+  const separator = meta.indexOf(";");
+
+  return separator === -1 ? meta : meta.slice(0, separator);
+}
+
+/**
+ * 按真实 MIME 修正扩展名。
+ *
+ * Canvas 编码 WebP 在不支持的浏览器里会静悄悄退回 PNG，
+ * 这时文件名就不能还叫 .webp。
+ */
+function withMatchingExtension(fileName: string, dataUrl: string): string {
+  const extension = MIME_EXTENSIONS[dataUrlMime(dataUrl)];
+
+  if (!extension) return fileName;
+
+  const dot = fileName.lastIndexOf(".");
+  const base = dot > 0 ? fileName.slice(0, dot) : fileName;
+
+  return `${base}.${extension}`;
+}
 
 /** 把 SVG 字符串转成可直接下载的 data URL */
 function toSvgDataUrl(svg: string): string {
@@ -69,15 +106,16 @@ function dataUrlToBlob(dataUrl: string): Blob {
  * 把 ECharts 配置渲染成图片 data URL
  *
  * 用离屏容器重新渲染，不会影响屏幕上正在显示的实例；
- * SVG 走 svg 渲染器，PNG 走 canvas 并提高像素密度。
+ * 矢量格式走 svg 渲染器，位图格式走 canvas 并提高像素密度。
  */
 export async function renderChartImage(
   option: ChartOption,
-  format: ChartImageFormat,
+  format: ChartExportFormat,
   size?: Partial<ChartImageSize>,
 ): Promise<string> {
   const width = Math.round(size?.width ?? 0) || FALLBACK_IMAGE_SIZE.width;
   const height = Math.round(size?.height ?? 0) || FALLBACK_IMAGE_SIZE.height;
+  const isVector = format === "svg";
 
   const host = document.createElement("div");
 
@@ -93,10 +131,10 @@ export async function renderChartImage(
   document.body.appendChild(host);
 
   const chart = echarts.init(host, undefined, {
-    renderer: format === "svg" ? "svg" : "canvas",
+    renderer: isVector ? "svg" : "canvas",
     width,
     height,
-    // PNG 的分辨率交给 getDataURL 的 pixelRatio，这里保持 1 倍避免重复放大
+    // 位图的分辨率交给 getDataURL 的 pixelRatio，这里保持 1 倍避免重复放大
     devicePixelRatio: 1,
   });
 
@@ -113,15 +151,22 @@ export async function renderChartImage(
 
     await nextFrame();
 
-    if (format === "svg") {
+    if (isVector) {
       return toSvgDataUrl(chart.renderToSVGString({ useViewBox: true }));
     }
 
-    return chart.getDataURL({
-      type: "png",
+    // ECharts 的类型只声明了 png / jpeg / svg，运行时是把 type 直接拼成
+    // `image/<type>` 交给 Canvas，所以 webp 走同一条路径；
+    // 浏览器不支持 WebP 编码时 Canvas 会退回 PNG，下载时会按真实 MIME 修正扩展名。
+    const options = {
+      type: format,
       pixelRatio: PIXEL_RATIO,
       backgroundColor: BACKGROUND_COLOR,
-    });
+    };
+
+    return chart.getDataURL(
+      options as unknown as Parameters<typeof chart.getDataURL>[0],
+    );
   } finally {
     chart.dispose();
     host.remove();
@@ -134,7 +179,7 @@ export function downloadChartImage(dataUrl: string, fileName: string): void {
   const link = document.createElement("a");
 
   link.href = url;
-  link.download = fileName;
+  link.download = withMatchingExtension(fileName, dataUrl);
 
   document.body.appendChild(link);
   link.click();

@@ -25,6 +25,11 @@ const routes: RouteRecordRaw[] = [
     redirect: "/dashboard/table",
     children: [
       {
+        path: "ai",
+        name: "ai",
+        component: () => import("@/pages/Ai/Ai.vue"),
+      },
+      {
         path: "setting",
         name: "setting",
         component: () => import("@/pages/Setting/Setting.vue"),

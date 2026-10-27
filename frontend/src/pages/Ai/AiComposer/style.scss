@@ -1,0 +1,305 @@
+.ai-composer {
+    position: relative;
+    flex-shrink: 0;
+    padding: $size-padding-smaller clamp(20px, 4vw, 48px) $size-padding;
+    border-top: 1px solid clr(border);
+
+    background: clr(bg);
+}
+
+.ai-composer__inner {
+    width: 100%;
+    max-width: 820px;
+    margin: 0 auto;
+}
+
+.ai-composer__notice {
+    margin: 0 0 6px;
+    padding: 0 2px;
+
+    color: clr(error);
+    font-size: $size-font-smallest;
+    line-height: 1.5;
+}
+
+/* ===== 输入框容器 ===== */
+.ai-composer__box {
+    padding: $size-padding-smaller;
+    border: 1px solid clr(border);
+    border-radius: $size-radius-bigger;
+
+    background: clr(bg);
+    transition: $transition;
+
+    @include flex(column);
+}
+
+.ai-composer__box:focus-within {
+    border-color: clr(border-darker);
+}
+
+/* FormInput 融进输入框容器：去掉它自带的边框与背景，焦点态由外层容器表达 */
+.ai-composer__field {
+    width: 100%;
+    min-width: 0;
+}
+
+.ai-composer__field :deep(.form-input) {
+    width: 100%;
+}
+
+.ai-composer__field :deep(.form-input.is-textarea .form-input__inner) {
+    width: 100%;
+    height: auto;
+    min-height: 44px;
+    max-height: 200px;
+    padding: 2px $size-padding-smallest;
+    border: none;
+    border-radius: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+
+    color: clr(text);
+    font: inherit;
+    font-size: $size-font-smaller;
+    line-height: 1.65;
+    background: transparent;
+    outline: none;
+    resize: none;
+}
+
+.ai-composer__field :deep(.form-input__inner::placeholder) {
+    color: clr(text);
+    opacity: 0.32;
+}
+
+/* ===== 底部工具条 ===== */
+.ai-composer__footer {
+    @include flex(row, space-between, center, null, $size-padding-smaller);
+}
+
+.ai-composer__tools {
+    min-width: 0;
+
+    @include flex(row, flex-start, center, null, 2px);
+}
+
+.ai-composer__tool {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: $size-radius-smaller;
+
+    color: clr(icon);
+    cursor: pointer;
+    opacity: 0.7;
+    transition: $transition;
+
+    @include flex(row, center, center);
+}
+
+.ai-composer__tool:hover:not(:disabled) {
+    background: clr(bg-darker);
+    opacity: 1;
+}
+
+.ai-composer__tool:disabled {
+    cursor: not-allowed;
+    opacity: 0.22;
+}
+
+.ai-composer__table {
+    flex-shrink: 0;
+    height: 24px;
+    margin-left: $size-padding-smallest;
+    padding: 0 $size-padding-smaller;
+    border: 1px solid clr(border);
+    border-radius: $size-radius-smaller;
+
+    color: clr(text);
+    font-size: $size-font-smallest;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: $transition;
+    white-space: nowrap;
+}
+
+.ai-composer__table:hover:not(:disabled) {
+    background: clr(bg-darker);
+    opacity: 1;
+}
+
+.ai-composer__table:disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+}
+
+.ai-composer__send-group {
+    flex-shrink: 0;
+
+    @include flex(row, flex-end, center, null, $size-padding-smaller);
+}
+
+.ai-composer__hint {
+    color: clr(text);
+    font-size: $size-font-smallest;
+    opacity: 0.4;
+}
+
+.ai-composer__send {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+
+    color: clr(bg);
+    background: clr(text);
+    cursor: pointer;
+    transition: $transition;
+
+    @include flex(row, center, center);
+}
+
+.ai-composer__send:hover:not(:disabled) {
+    opacity: 0.82;
+}
+
+.ai-composer__send:disabled {
+    cursor: not-allowed;
+    opacity: 0.25;
+}
+
+.ai-composer__send--stop {
+    color: clr(text);
+    background: transparent;
+    border: 1px solid clr(border-darker);
+}
+
+.ai-composer__send--stop:hover {
+    background: clr(bg-darker);
+    opacity: 1;
+}
+
+/* ===== 数据上下文 ===== */
+.ai-composer__dataset-row {
+    padding: 0 2px $size-padding-smaller;
+}
+
+.ai-composer__dataset {
+    max-width: 100%;
+    padding: 3px 4px 3px $size-padding-smaller;
+    border: 1px solid clr(border);
+    border-radius: $size-radius-smaller;
+
+    color: clr(text);
+    font-size: $size-font-smallest;
+    background: clr(bg-darker);
+
+    @include inline-flex(row, flex-start, center, null, 6px);
+}
+
+.ai-composer__dataset-icon {
+    flex-shrink: 0;
+    opacity: 0.55;
+
+    @include inline-flex(row, center, center);
+}
+
+.ai-composer__dataset-name {
+    overflow: hidden;
+    max-width: 260px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ai-composer__dataset-meta {
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.5;
+}
+
+.ai-composer__dataset-remove {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+
+    color: clr(text);
+    cursor: pointer;
+    opacity: 0.45;
+    transition: $transition;
+
+    @include flex(row, center, center);
+}
+
+.ai-composer__dataset-remove:hover {
+    opacity: 0.9;
+}
+
+/* ===== 图片预览 ===== */
+.ai-composer__attachments {
+    padding: 0 2px $size-padding-smaller;
+
+    @include flex(row, flex-start, center, wrap, $size-padding-smaller);
+}
+
+.ai-composer__attachment {
+    position: relative;
+    width: 54px;
+    height: 54px;
+    margin: 0;
+    border: 1px solid clr(border);
+    border-radius: $size-radius;
+    overflow: hidden;
+
+    background: clr(bg-darker);
+}
+
+.ai-composer__attachment img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ai-composer__attachment-remove {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+
+    color: #fff;
+    background: rgba(0, 0, 0, 0.55);
+    cursor: pointer;
+    transition: $transition;
+
+    @include flex(row, center, center);
+}
+
+.ai-composer__attachment-remove:hover {
+    background: rgba(0, 0, 0, 0.78);
+}
+
+/* ===== 拖拽提示 ===== */
+.ai-composer__overlay {
+    position: absolute;
+    inset: 6px clamp(20px, 4vw, 48px) 6px;
+    z-index: 3;
+    border: 1px dashed clr(border-darker);
+    border-radius: $size-radius-bigger;
+
+    color: clr(text);
+    font-size: $size-font-smaller;
+    background: clr(bg-darker);
+
+    @include flex(row, center, center);
+
+    opacity: 0.96;
+    pointer-events: none;
+}
+
+.ai-composer__file {
+    display: none;
+}
