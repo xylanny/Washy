@@ -45,14 +45,26 @@ auth:
   token-expire-seconds: 2592000
 app:
   cors:
+    # 支持逗号分隔的多个来源，例如 https://a.example.com,https://b.example.com
     allowed-origin: ${APP_CORS_ALLOWED_ORIGINS}
 ai:
+  # DeepSeek（OpenAI 兼容协议）
   api-key: ${DEEPSEEK_API_KEY}
   base-url: https://api.deepseek.com
-  model: deepseek-chat
-  timeout-seconds: 60
+  # deepseek-flash 同时支持文本与图片输入
+  model: deepseek-flash
+  vision-model: deepseek-flash
+  vision-enabled: true
+  timeout-seconds: 120
   connect-timeout-seconds: 10
   temperature: 0.7
-  max-tokens: 800
+  max-tokens: 4096
   max-retries: 3
+  # 单条消息最多携带的图片数 / 图片总大小（字符）
+  max-images: 4
+  max-image-bytes: 8388608
+  # 数据上下文与历史消息上限
+  max-context-chars: 12000
+  max-history-messages: 20
+  stream-pool-size: 8
 
