@@ -1,0 +1,56 @@
+.profile-details {
+    width: 100%;
+    min-width: 0;
+
+    @include flex(column, null, stretch, null, $size-padding-smaller);
+}
+
+.profile-details__title {
+    margin: 0;
+
+    color: clr(text);
+    font-size: $size-font-smaller;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.profile-details__list {
+    margin: 0;
+
+    @include flex(column, null, stretch);
+}
+
+.profile-details__row {
+    padding: 10px 0;
+    border-bottom: 1px solid clr(border);
+
+    @include flex(row, space-between, center, null, $size-padding);
+}
+
+.profile-details__row:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.profile-details__label {
+    flex-shrink: 0;
+
+    color: clr(text);
+    font-size: $size-font-smallest;
+    line-height: 1.5;
+    opacity: 0.6;
+}
+
+.profile-details__value {
+    margin: 0;
+    min-width: 0;
+    overflow: hidden;
+
+    color: clr(text);
+    font-size: $size-font-smallest;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.5;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

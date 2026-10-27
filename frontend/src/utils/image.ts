@@ -101,3 +101,45 @@ export function formatBytes(bytes: number): string {
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)}KB`;
   return `${(bytes / 1024 / 1024).toFixed(1)}MB`;
 }
+
+/**
+ * 把图片居中裁成正方形并转成 JPEG 的 base64（头像用）。
+ *
+ * @returns 不含 `data:image/jpeg;base64,` 前缀的 base64 字符串
+ */
+export async function cropSquareImageBase64(
+  file: File,
+  size: number,
+  quality: number,
+): Promise<string> {
+  const dataUrl = await readFileAsDataURL(file);
+  const image = await loadImage(dataUrl);
+
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  const side = Math.min(image.width, image.height);
+
+  canvas.width = size;
+  canvas.height = size;
+
+  if (!context) return dataUrl.split(",")[1] ?? "";
+
+  // JPEG 没有透明通道，先铺白底避免出现黑边
+  context.fillStyle = "#ffffff";
+  context.fillRect(0, 0, size, size);
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = "high";
+  context.drawImage(
+    image,
+    Math.max(0, (image.width - side) / 2),
+    Math.max(0, (image.height - side) / 2),
+    side,
+    side,
+    0,
+    0,
+    size,
+    size,
+  );
+
+  return canvas.toDataURL("image/jpeg", quality).split(",")[1] ?? "";
+}
