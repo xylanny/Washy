@@ -26,7 +26,9 @@
         @keydown.enter.prevent="emits('select', session.id)"
       >
         <div class="ai-sessions__body">
-          <span class="ai-sessions__title">{{ session.title || "New chat" }}</span>
+          <span class="ai-sessions__title">{{
+            session.title || "New chat"
+          }}</span>
           <span class="ai-sessions__meta">{{ metaOf(session) }}</span>
         </div>
 
@@ -41,10 +43,9 @@
     </ul>
 
     <div class="ai-sessions__foot">
-      <span class="ai-sessions__foot-text">History is kept in this browser.</span>
-      <span v-if="model" class="ai-sessions__model" :title="`Model: ${model}`">
-        {{ model }}
-      </span>
+      <span class="ai-sessions__foot-text"
+        >History is kept in this browser.</span
+      >
     </div>
   </aside>
 </template>
