@@ -1,6 +1,7 @@
 <template>
   <header class="dashboard-header">
-    <Dropdown v-model:is-open="isOpen" trigger-mode="click" align="bottom-left">
+    <!-- File -->
+    <Dropdown v-model:is-open="fileOpen" trigger-mode="click" align="bottom-left">
       <template #trigger>
         <button class="dashboard-header__trigger">
           <span>File</span>
@@ -22,41 +23,6 @@
           </div>
         </DropdownItem>
 
-        <Dropdown trigger-mode="hover" align="top-right" :offset="0">
-          <template #trigger>
-            <button
-              class="dashboard-header__item"
-              :disabled="!canSave"
-              :title="canSave ? undefined : 'No chart to save'"
-            >
-              <span>Save</span>
-              <span class="dashboard-header__arrow" v-html="ICON_SVG_GO"></span>
-            </button>
-          </template>
-
-          <template #panel>
-            <DropdownItem
-              :is-disable="!canSave"
-              @click-item="handleSaveChart('png')"
-            >
-              <div class="dashboard-header__item">
-                <span>PNG</span>
-                <span class="dashboard-header__shortcut">Ctrl + S</span>
-              </div>
-            </DropdownItem>
-
-            <DropdownItem
-              :is-disable="!canSave"
-              @click-item="handleSaveChart('svg')"
-            >
-              <div class="dashboard-header__item">
-                <span>SVG</span>
-                <span class="dashboard-header__shortcut">Ctrl + Shift + S</span>
-              </div>
-            </DropdownItem>
-          </template>
-        </Dropdown>
-
         <DropdownItem @click-item="handleCloseFile">
           <div class="dashboard-header__item">
             <span>Close</span>
@@ -66,8 +32,9 @@
       </template>
     </Dropdown>
 
+    <!-- Edit -->
     <Dropdown
-      v-model:is-open="isEditOpen"
+      v-model:is-open="editOpen"
       trigger-mode="click"
       align="bottom-left"
     >
@@ -88,6 +55,62 @@
       </template>
     </Dropdown>
 
+    <!-- Save：把当前图表导出成浏览器支持良好的图片格式 -->
+    <Dropdown
+      v-model:is-open="saveOpen"
+      trigger-mode="click"
+      align="bottom-left"
+    >
+      <template #trigger>
+        <button
+          class="dashboard-header__trigger"
+          :title="canExport ? undefined : 'No chart on this page to save'"
+        >
+          <span>Save</span>
+        </button>
+      </template>
+
+      <template #panel>
+        <DropdownItem
+          :is-disable="!canExport"
+          @click-item="handleSaveChart('png')"
+        >
+          <div class="dashboard-header__item">
+            <span>PNG</span>
+            <span class="dashboard-header__shortcut">Ctrl + S</span>
+          </div>
+        </DropdownItem>
+
+        <DropdownItem
+          :is-disable="!canExport"
+          @click-item="handleSaveChart('svg')"
+        >
+          <div class="dashboard-header__item">
+            <span>SVG</span>
+            <span class="dashboard-header__shortcut">Ctrl + Shift + S</span>
+          </div>
+        </DropdownItem>
+
+        <DropdownItem
+          :is-disable="!canExport"
+          @click-item="handleSaveChart('jpeg')"
+        >
+          <div class="dashboard-header__item">
+            <span>JPEG</span>
+          </div>
+        </DropdownItem>
+
+        <DropdownItem
+          :is-disable="!canExport"
+          @click-item="handleSaveChart('webp')"
+        >
+          <div class="dashboard-header__item">
+            <span>WebP</span>
+          </div>
+        </DropdownItem>
+      </template>
+    </Dropdown>
+
     <!-- 隐藏的文件上传 input -->
     <input
       ref="fileInputRef"
@@ -100,13 +123,12 @@
 </template>
 
 <script setup lang="ts">
-import type { ChartImageFormat } from "@/utils/chartExport";
+import type { ChartExportFormat } from "@/utils/chartExport";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import Dropdown from "@/components/Dropdown/Dropdown.vue";
 import DropdownItem from "@/components/Dropdown/DropdownItem.vue";
-import { ICON_SVG_GO } from "./constants";
 import { useChartStore } from "@/stores/chart";
 import { useEditStore } from "@/stores/edit";
 import { useTableStore } from "@/stores/table";
@@ -117,13 +139,17 @@ const tableStore = useTableStore();
 const editStore = useEditStore();
 const chartStore = useChartStore();
 const { table } = storeToRefs(tableStore);
-const { canSave } = storeToRefs(chartStore);
+const { canSave, saving } = storeToRefs(chartStore);
 
-const isOpen = ref(false);
-const isEditOpen = ref(false);
+const fileOpen = ref(false);
+const editOpen = ref(false);
+const saveOpen = ref(false);
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
 const canReset = computed(() => Boolean(editStore.resetHandler));
+
+/** 当前页面有图表且没有正在导出时才能保存 */
+const canExport = computed(() => canSave.value && !saving.value);
 
 function handleReset() {
   editStore.reset();
@@ -160,7 +186,7 @@ function handleBackToTable() {
 }
 
 /** 导出当前图表：配置由 chart store 统一维护 */
-function handleSaveChart(format: ChartImageFormat) {
+function handleSaveChart(format: ChartExportFormat) {
   void chartStore.saveAs(format);
 }
 
@@ -189,12 +215,12 @@ function handleKeydown(e: KeyboardEvent) {
     handleBackToTable();
   }
 
-  // Ctrl + S / Ctrl + Shift + S：导出当前图表（PNG / SVG），没有图表时交给浏览器
+  // Ctrl + S / Ctrl + Shift + S：导出 PNG / SVG，没有图表时交给浏览器
   if (
     (e.ctrlKey || e.metaKey) &&
     !e.altKey &&
     e.key.toLowerCase() === "s" &&
-    canSave.value
+    canExport.value
   ) {
     e.preventDefault();
     handleSaveChart(e.shiftKey ? "svg" : "png");
