@@ -13,7 +13,7 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI backendOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("Corn BI Backend API").version("1.0"))
+                .info(new Info().title("Washy Backend API").version("1.0"))
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth",
                                 new SecurityScheme()

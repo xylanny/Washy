@@ -6,3 +6,8 @@ target/
 node_modules
 .env
 .env.*
+
+# 部署时生成的内容：环境变量模板需要提交，MySQL 数据目录与 TLS 证书不要提交
+!.env.template
+mysql/data/
+nginx/ssl/

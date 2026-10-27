@@ -1,0 +1,52 @@
+networks:
+  app-network:
+    driver: bridge
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: washy-mysql
+    restart: unless-stopped
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - app-network
+    healthcheck:
+        test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+        start_period: 30s
+  backend:
+    build:
+      context: ./backend
+    container_name: washy-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+  frontend:
+    build:
+      context: ./frontend
+    container_name: washy-frontend
+    restart: unless-stopped
+    networks:
+      - app-network
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: washy-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
